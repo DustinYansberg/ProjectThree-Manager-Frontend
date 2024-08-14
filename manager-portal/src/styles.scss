@@ -1,1 +1,67 @@
-/* You can add global styles to this file, and also import other style files */
+// If you have a global asset, you can put it here in theis format
+//$hero-background-image: url('assets/hero-image.png');
+
+// Light mode colors
+$primary-color-light: #c6c6c6;
+$secondary-color-light: #dfdfdf;
+$background-color-light: #ffffff;
+$text-color-light: #333333;
+
+// Dark mode colors
+$primary-color-dark: #232323;
+$secondary-color-dark: #2f2f2f;
+$background-color-dark: #565656;
+$text-color-dark: #fff;
+
+// Default to light mode
+$primary-color: $primary-color-light;
+$secondary-color: $secondary-color-light;
+$background-color: $background-color-light;
+$text-color: $text-color-light;
+
+// If no style is assigned, root is assigned
+:root {
+    // You can load assets to root like this
+    //--hero-background-image: #{$hero-background-image};
+  --primary-color: #{$primary-color-light};
+  --secondary-color: #{$secondary-color-light};
+  --background-color: #{$background-color-light};
+  --text-color: #{$text-color-light};
+}
+
+// Light mode properties
+body.light-mode {
+  --primary-color: #{$primary-color-light};
+  --secondary-color: #{$secondary-color-light};
+  --background-color: #{$background-color-light};
+  --text-color: #{$text-color-light};
+}
+
+// Dark mode properties
+body.dark-mode {
+  --primary-color: #{$primary-color-dark};
+  --secondary-color: #{$secondary-color-dark};
+  --background-color: #{$background-color-dark};
+  --text-color: #{$text-color-dark};
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: var(--primary-color);
+}
+
+button {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+}
+
+header, footer {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+}
