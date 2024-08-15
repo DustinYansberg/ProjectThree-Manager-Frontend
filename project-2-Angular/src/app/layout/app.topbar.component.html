@@ -1,0 +1,26 @@
+<div class="layout-topbar">
+
+    <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()">
+        <i class="pi pi-bars"></i>
+    </button>
+
+    <a class="layout-topbar-logo" routerLink="/">
+        <span>SHS Management Portal</span>
+    </a>
+
+    <button #topbarmenubutton class="p-link layout-topbar-menu-button layout-topbar-button" (click)="layoutService.showProfileSidebar()">
+        <i class="pi pi-ellipsis-v"></i>
+    </button>
+
+    <div #topbarmenu class="layout-topbar-menu" [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
+        <p-menu #menu [model]="profileItems" [popup]="true" />
+        <p-button class="p-link layout-topbar-button" (onClick)="menu.toggle($event)" icon="pi pi-user">
+            <i class="pi pi-user"></i>
+            <span>Profile</span>
+        </p-button>
+        <p-button class="p-link layout-topbar-button" (onClick)="settingsMenu.toggle($event)" icon="pi pi-cog">
+            <i class="pi pi-cog"></i>
+            <span>Settings</span>
+        </p-button>
+        <p-menu #settingsMenu [model]="settingsItems" [popup]="true"></p-menu>
+</div>

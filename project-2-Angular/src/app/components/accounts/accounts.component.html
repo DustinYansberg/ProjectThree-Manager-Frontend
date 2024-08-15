@@ -1,0 +1,151 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+                        <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedAccounts()" [disabled]="!selectedAccounts || !selectedAccounts.length"></button>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="right">
+                    <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help" (click)="dt.exportCSV()"></button>
+                </ng-template>
+            </p-toolbar>
+
+            <p-table #dt [loading]="loading" [value]="accounts" [customSort]="true" (sortFunction)="customSort($event)" [columns]="cols" responsiveLayout="scroll" [rows]="10" [globalFilterFields]="['identity.userName','application.displayName']" [paginator]="true" [rowsPerPageOptions]="[10,20,30,50,100]" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [(selection)]="selectedAccounts" selectionMode="multiple" [rowHover]="true" dataKey="id">
+                <ng-template pTemplate="caption">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                        <h5 class="m-0">Manage Accounts</h5>
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."  class="w-full sm:w-auto"/>
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th pSortableColumn="identity.userName">Entity User Name <p-sortIcon field='identity.userName'></p-sortIcon></th>
+                        <th pSortableColumn="id">Account ID <p-sortIcon field="id"></p-sortIcon></th>
+                        <th pSortableColumn="application">Application Name <p-sortIcon field='application'></p-sortIcon></th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-account>
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="account"></p-tableCheckbox>
+                        </td>
+                        <td style="width:30%; min-width:10rem; max-width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            <span class="p-column-title">Entity User Name</span>
+                            <a [routerLink]="['/employeedetail', account.identity.value]" title="{{account.identity.userName || account.id}}">
+                                {{ (account.identity.userName || account.id) | slice:0:20 }}{{ (account.identity.userName || account.id).length > 20 ? '...' : '' }}
+                            </a>
+                        </td>
+                        <td style="width:30%; min-width:10rem; max-width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            <span class="p-column-title">Account ID</span>
+                            <a [routerLink]="['/accountdetail', account.id]" title="{{account.id}}">
+                                {{ (account.id) | slice:0:20 }}{{ (account.id).length > 20 ? '...' : '' }}
+                            </a>
+                        </td>
+                        <td style="width:30%; min-width:8rem; max-width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            <span class="p-column-title" title="{{ account.application.displayName }}">Application Name</span>
+                            {{ account.application.displayName }}
+                        </td>
+                        <td>
+                            <div class="flex">
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteAccount(account)"></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <p-dialog [(visible)]="accountDialog" [style]="{width: '450px'}" header="Account Details" [modal]="true" class="p-fluid">
+            <ng-template pTemplate="content">
+                <div class="field">
+                    <label for="identity">Identity</label>
+                    <p-dropdown [options]="users" [(ngModel)]="account.identity.value" name="identity" placeholder="Select Identity" [filter]="true" optionLabel="label" optionValue="value" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !account.identity.value}"></p-dropdown> 
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !account.identity.value">Identity is required.</small>
+                </div>
+                <div class="field">
+                    <label for="application">Application</label>
+                    <p-dropdown [options]="applications" [(ngModel)]="account.application.value" name="application" placeholder="Select Application" [filter]="true" optionLabel="label" optionValue="value" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !account.application.value}"></p-dropdown>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !account.application.value">Application is required.</small>
+                </div>
+                <div class="field">
+                    <label for="username">Username (Email)</label>
+                    <input 
+                        type="email" pInputText id="username" name="username" 
+                        [(ngModel)]="account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].Username" 
+                        required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && accountForm.controls.username?.invalid}"
+                    />
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && accountForm.controls.username?.errors?.required">Username is required.</small>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && accountForm.controls.username?.errors?.email">Username must be a valid email address.</small>
+                </div>
+                <div class="field">
+                    <label for="firstName">First Name</label>
+                    <input type="text" pInputText id="firstName" name="firstName" [(ngModel)]="account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].FirstName" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].FirstName}"/>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].FirstName">First Name is required.</small>
+                </div> 
+                <div class="field">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" pInputText id="lastName" name="lastName" [(ngModel)]="account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].LastName" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].LastName}"/>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].LastName">Last Name is required.</small>
+                </div>
+                <div class="field">
+                    <label for="nickname">Community Nickname</label>
+                    <input type="text" pInputText id="nickname" name="nickname" [(ngModel)]="account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].CommunityNickname" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].CommunityNickname}"/>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].CommunityNickname">Community Nickname is required.</small>
+                </div>
+                <div class="field">
+                    <label for="alias">Alias</label>
+                    <input type="text" maxlength="8" pInputText id="alias" name="alias" [(ngModel)]="account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].Alias" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].Alias}"/>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].Alias">Alias is required.</small>
+                </div>
+                <div class="field">
+                    <label for="email">Email</label>
+                    <input 
+                        type="email" pInputText id="email" name="email" 
+                        [(ngModel)]="account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].Email" 
+                        required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && accountForm.controls.email?.invalid}"
+                    />
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && accountForm.controls.email?.errors?.required">Email is required.</small>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && accountForm.controls.email?.errors?.email">Email must be a valid email address.</small>
+                </div>
+                <div class="p-dialog-footer">
+                    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveAccount()"></button>
+                </div>
+            </ng-template>
+        </p-dialog>
+
+        <p-dialog [(visible)]="deleteAccountDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+            <div class="flex align-items-center justify-content-center">
+                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                <span *ngIf="account">Are you sure you want to delete <b>{{account.id}}</b>?</span>
+            </div>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteAccountDialog = false"></button>
+                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="confirmDelete()"></button>
+            </ng-template>
+        </p-dialog>
+
+        <p-dialog [(visible)]="deleteAccountsDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+            <div class="flex align-items-center justify-content-center">
+                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                <span>Are you sure you want to delete selected accounts?</span>
+            </div>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteAccountsDialog = false"></button>
+                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="confirmDeleteSelected()"></button>
+            </ng-template>
+        </p-dialog>
+    </div>
+</div>
