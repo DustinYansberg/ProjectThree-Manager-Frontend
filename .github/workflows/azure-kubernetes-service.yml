@@ -36,10 +36,10 @@ on:
 
 env:
   AZURE_CONTAINER_REGISTRY: "managerfrontend.azurecr.io"
-  CONTAINER_NAME: "manager-portal"
+  CONTAINER_NAME: "manager-frontend"
   RESOURCE_GROUP: "Shark-Tales-Resources"
   CLUSTER_NAME: "aks-Hospital"
-  DEPLOYMENT_MANIFEST_PATH: "ProjectThree-Manager-Frontend\project-2-Angular\k8s\deployement.yaml"
+  DEPLOYMENT_MANIFEST_PATH: "ProjectThree-Manager-Frontend/project-2-Angular/k8s/deployement.yaml"
 
 jobs:
   buildImage:
