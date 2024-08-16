@@ -13,7 +13,7 @@ spec:
         app: manager-frontend
     spec:
       containers:
-      - name: manager-portal-container
+      - name: manager-frontend
         image: managerfrontend.azurecr.io/manager-frontend:latest
         ports:
         - containerPort: 80
