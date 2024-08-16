@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: manager-portal
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: manager-portal
+  template:
+    metadata:
+      labels:
+        app: manager-portal
+    spec:
+      containers:
+      - name: manager-portal-container
+        image: managerfrontend.azurecr.io/manager-portal-container:latest
+        ports:
+        - containerPort: 80
