@@ -2,38 +2,31 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { TokenService } from './token.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  headers = new HttpHeaders({
-  });
+  //set to true to bypass authentication in development mode
+  private isLoggedIn = true;
 
-  private isLoggedIn = false;
-
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private tokenService: TokenService) {}
 
   login(username: string, password: string): Observable<boolean> {
-    this.headers = new HttpHeaders({
-      Authorization: 'Basic ' + btoa(username + ':' + password)
+    const authString = btoa(username + ':' + password);
+    const headers = new HttpHeaders({
+      Authorization: 'Basic ' + authString
     });
 
-    // if (username === 'spadmin' && password === 'admin') {
-    //   this.isLoggedIn = true;
-    //   return of(true);
-    // } else {
-    //   this.isLoggedIn = false;
-    //   return of(false);
-    // }
-
-    return this.http.get('http://localhost:3000/api/users', { headers: this.headers }).pipe(
+    return this.http.get('http://localhost:3000/api/users', { headers }).pipe(
       map(response => {
         this.isLoggedIn = true;
+        this.tokenService.setToken(authString); // Store the token
         return true;
       }),
       catchError(error => {
-        console.log(error);
+        console.error(error);
         this.isLoggedIn = false;
         return of(false);
       })
@@ -42,13 +35,10 @@ export class AuthService {
 
   logout() {
     this.isLoggedIn = false;
+    this.tokenService.setToken(''); // Clear the token
   }
 
   isAuthenticated(): boolean {
-    return this.isLoggedIn ;
-  }
-
-  getHeaders() {
-    return this.headers;
+    return this.isLoggedIn;
   }
 }
