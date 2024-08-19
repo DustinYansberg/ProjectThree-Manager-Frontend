@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: mgrfrntend 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mgrfrntend
+  template:
+    metadata:
+      labels:
+        app: mgrfrntend 
+    spec:
+      containers:
+        - name: mgrfrntend 
+          image: managerfrontend.azurecr.io/mgrfrntend
+          ports:
+          - containerPort: 4200
