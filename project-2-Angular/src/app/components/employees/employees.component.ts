@@ -18,7 +18,7 @@ export class EmployeesComponent implements OnInit {
 
     employees: any[] = [];
     
-    defaultEmployee: Employee = new Employee("", "", new Name("", "", ""), "", "", false, "", [], new EmployeeDetail("", "", ""), new Manager("", "", ""));
+    defaultEmployee: Employee = new Employee("", "", new Name("", "", ""), "", "", false, "", [], new EmployeeDetail("", "", "", [], [], []), new Manager("", "", ""));
 
     selectedEmployees: Employee[] = [];
 

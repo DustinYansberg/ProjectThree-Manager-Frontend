@@ -4,6 +4,8 @@ import { EmployeeService } from 'src/app/Services/employee.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { Employee } from 'src/app/Models/employee';
+import { Manager } from 'src/app/Models/manager';
 
 @Component({
     templateUrl: './employee-detail.component.html',
@@ -11,7 +13,7 @@ import { MessageService } from 'primeng/api';
 })
 export class EmployeeDetailComponent implements OnInit {
 
-    employeeDetails: EmployeeDetail;
+    employee: Employee;
 
     primaryEmail: string;
 
@@ -23,11 +25,25 @@ export class EmployeeDetailComponent implements OnInit {
             next: (response) => {
                 let employeeResponse: any = response.body;
                 console.log(employeeResponse)
-                this.employeeDetails = new EmployeeDetail(
-                    employeeResponse.id || '',
-                    employeeResponse.userName || '',
-                    employeeResponse.displayName || ''
+                if (!employeeResponse.emails || !employeeResponse.emails[0] || !employeeResponse.emails[0].value) {
+                    employeeResponse.emails = [new Email("", " ", true)];
+                }
+                if (!employeeResponse.manager || !employeeResponse.manager.displayName) {
+                    employeeResponse.manager = new Manager("N/A", "N/A", "N/A");
+                }
+                this.employee = new Employee(
+                    employeeResponse.id,
+                    employeeResponse.userName,
+                    employeeResponse.name,
+                    employeeResponse.displayName,
+                    employeeResponse.userType,
+                    employeeResponse.active,
+                    employeeResponse.password,
+                    employeeResponse.emails,
+                    employeeResponse.employeeDetails,
+                    employeeResponse.manager
                 );
+                console.log(this.employee)
 
             },
             error: (err) => {
