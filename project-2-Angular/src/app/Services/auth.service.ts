@@ -7,10 +7,19 @@ import { map, catchError } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class AuthService {
-  headers = new HttpHeaders({
-  });
+  // headers = new HttpHeaders({
+  // });
 
   private isLoggedIn = false;
+
+  username = "user";
+  password = "0bf1b1c0-5ff8-4e1c-ade9-5edeaa072dd4";
+
+  headers = new HttpHeaders({
+    Authorization: 'Basic ' + btoa(this.username + ':' + this.password),
+    'Access-Control-Allow-Origin': '*'
+  });
+  
 
   constructor(private http: HttpClient) {}
 
@@ -18,6 +27,8 @@ export class AuthService {
     this.headers = new HttpHeaders({
       Authorization: 'Basic ' + btoa(username + ':' + password)
     });
+
+    this.headers.append('Access-Control-Allow-Origin', '*');
 
     // if (username === 'spadmin' && password === 'admin') {
     //   this.isLoggedIn = true;
@@ -27,7 +38,7 @@ export class AuthService {
     //   return of(false);
     // }
 
-    return this.http.get('http://localhost:3000/api/users', { headers: this.headers }).pipe(
+    return this.http.get('http://localhost:8081/employee', { headers: this.headers }).pipe(
       map(response => {
         this.isLoggedIn = true;
         return true;

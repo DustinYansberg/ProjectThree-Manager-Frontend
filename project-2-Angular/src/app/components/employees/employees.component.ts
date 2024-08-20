@@ -4,6 +4,8 @@ import { Table } from 'primeng/table';
 import { timeout } from 'rxjs';
 import { Email } from 'src/app/Models/email';
 import { Employee } from 'src/app/Models/employee';
+import { EmployeeDetail } from 'src/app/Models/employeeDetail';
+import { Manager } from 'src/app/Models/manager';
 import { Name } from 'src/app/Models/name';
 
 import { EmployeeService } from 'src/app/Services/employee.service';
@@ -16,7 +18,7 @@ export class EmployeesComponent implements OnInit {
 
     employees: any[] = [];
     
-    defaultEmployee: Employee = new Employee( '', '', new Name("", "", ""), '', 'employee', false, '', [new Email("", "", true)], '');
+    defaultEmployee: Employee = new Employee("", "", new Name("", "", ""), "", "", false, "", [], new EmployeeDetail("", "", ""), new Manager("", "", ""));
 
     selectedEmployees: Employee[] = [];
 
@@ -46,24 +48,15 @@ export class EmployeesComponent implements OnInit {
         .pipe(timeout(20000)) // 20 seconds timeout
         .subscribe({
             next: (response) => {
+                console.log(response);
                 let body: any = response.body;
 
-                body.Resources.forEach((resource: Employee) => {
+                body.forEach((resource: Employee) => {
                     if (!resource.emails || !resource.emails[0] || !resource.emails[0].value) {
                         resource.emails = [new Email("", " ", true)];
                     }
-
-                    if (!resource.managerDisplayName) {
-                        console.log(resource["urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"].manager.displayName);
-                        if (resource["urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"].manager.displayName) {
-                            resource.managerDisplayName = resource["urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"].manager.displayName;
-                        } else {
-                            resource.managerDisplayName = " ";
-                        }
-                    }
                 });
-                console.log(body.Resources);
-                this.employees = body.Resources;
+                this.employees = body;
 
                 this.cols = [
                     { field: 'displayName', header: 'Display Name' },
@@ -74,6 +67,7 @@ export class EmployeesComponent implements OnInit {
                 this.loading = false;
             },
             error: (err) => {
+                console.log(err);
                 this.loading = false;
                 this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
             }

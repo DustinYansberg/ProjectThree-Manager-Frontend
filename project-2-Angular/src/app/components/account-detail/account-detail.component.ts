@@ -1,5 +1,3 @@
-import { AccountDetail } from 'src/app/Models/accountDetails';
-import { Meta } from 'src/app/Models/meta';
 import { AccountService } from 'src/app/Services/account.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
@@ -11,7 +9,7 @@ import { MessageService } from 'primeng/api';
 })
 export class AccountDetailComponent implements OnInit {
 
-    accountDetails: AccountDetail;
+    // accountDetails: AccountDetail;
 
     constructor(private AccountService: AccountService, private messageService: MessageService, private route: ActivatedRoute, private router: Router) {}
 
@@ -44,22 +42,22 @@ export class AccountDetailComponent implements OnInit {
                     email = accountResponse["urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account"].Email || 'N/A';
                 }
         
-                this.accountDetails = new AccountDetail(
-                    accountResponse.application.displayName || 'N/A',
-                    accountResponse.id || 'N/A',
-                    accountResponse.displayName || 'N/A',
-                    accountAlias,
-                    accountResponse.active || false,
-                    roles,
-                    permissionSet,
-                    communityNickname,
-                    jobTitle,
-                    email,
-                    new Meta(
-                        new Date(accountResponse.meta.created),
-                        new Date(accountResponse.meta.lastModified)
-                    )
-                );
+                // this.accountDetails = new AccountDetail(
+                //     accountResponse.application.displayName || 'N/A',
+                //     accountResponse.id || 'N/A',
+                //     accountResponse.displayName || 'N/A',
+                //     accountAlias,
+                //     accountResponse.active || false,
+                //     roles,
+                //     permissionSet,
+                //     communityNickname,
+                //     jobTitle,
+                //     email,
+                //     new Meta(
+                //         new Date(accountResponse.meta.created),
+                //         new Date(accountResponse.meta.lastModified)
+                //     )
+                // );
     
 
             },

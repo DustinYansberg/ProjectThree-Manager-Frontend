@@ -1,6 +1,5 @@
 import { Email } from 'src/app/Models/email';
-import { Meta } from 'src/app/Models/meta';
-import { EmployeeDetail } from 'src/app/Models/employeeDetails';
+import { EmployeeDetail } from 'src/app/Models/employeeDetail';
 import { EmployeeService } from 'src/app/Services/employee.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
@@ -27,16 +26,7 @@ export class EmployeeDetailComponent implements OnInit {
                 this.employeeDetails = new EmployeeDetail(
                     employeeResponse.id || '',
                     employeeResponse.userName || '',
-                    employeeResponse.displayName || '',
-                    employeeResponse.active || false,
-                    employeeResponse.emails[0].value ? employeeResponse.emails[0].value : 'N/A',
-                    new Meta(
-                        new Date(employeeResponse.meta.created),
-                        new Date(employeeResponse.meta.lastModified),
-                    ),
-                    employeeResponse.isManager || false,
-                    employeeResponse.riskScore || 0,
-                    employeeResponse["urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"].manager.displayName || 'N/A'
+                    employeeResponse.displayName || ''
                 );
 
             },
