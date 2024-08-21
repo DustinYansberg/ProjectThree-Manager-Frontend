@@ -16,8 +16,8 @@ export class AuthService {
   password = "0bf1b1c0-5ff8-4e1c-ade9-5edeaa072dd4";
 
   headers = new HttpHeaders({
-    Authorization: 'Basic ' + btoa(this.username + ':' + this.password),
-    'Access-Control-Allow-Origin': '*'
+    // Authorization: 'Basic ' + btoa(this.username + ':' + this.password),
+    // 'Access-Control-Allow-Origin': '*'
   });
   
 

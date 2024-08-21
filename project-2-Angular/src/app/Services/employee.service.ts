@@ -8,14 +8,14 @@ export class EmployeeService {
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
-  url: String = 'http://localhost:8081/';
+  url: String = 'http://4.156.40.62:9001/';
 
   private getHeaders() {
     return this.authService.getHeaders();
   }
 
   getAllEmployees() {
-    return this.http.get(this.url + 'employee', { headers: this.getHeaders(), observe: 'response' });
+    return this.http.get(this.url + 'employee', { observe: 'response' });
   }
 
   getEmployeeById(id: string) {
