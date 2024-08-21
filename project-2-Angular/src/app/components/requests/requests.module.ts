@@ -16,6 +16,9 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { DialogModule } from 'primeng/dialog';
 import { RequestService } from '../../Services/request.service';
 import { RequestsComponent } from './requests.component';
+import { RequestsRoutingModule } from './requests-routing.module';
+
+
 
 @NgModule({
 	imports: [
@@ -33,11 +36,12 @@ import { RequestsComponent } from './requests.component';
         DropdownModule,
         RadioButtonModule,
         InputNumberModule,
-        DialogModule
+        DialogModule,
+        RequestsRoutingModule
 	],
 	providers: [
 		RequestService 
-	  ],
-	declarations: [RequestsComponent]
+  ],
+  declarations: [RequestsComponent]
 })
 export class RequestsModule { }

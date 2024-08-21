@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { LazyLoadEvent, MessageService, SelectItem, SortEvent } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { timeout } from 'rxjs';
 import { Email } from 'src/app/Models/email';
@@ -15,7 +15,7 @@ import { RequestService } from 'src/app/Services/request.service';
     providers: [MessageService]
 })
 export class RequestsComponent implements OnInit {
-
+    
     employees: any[] = [];
     
     defaultEmployee: Employee = new Employee("", "", new Name("", "", ""), "", "", false, "", [], new EmployeeDetail("", "", "", [], [], []), new Manager("", "", ""));
@@ -40,7 +40,8 @@ export class RequestsComponent implements OnInit {
 
     passwordFieldType: string = 'password';
 
-  constructor(private requestService: RequestService, private messageService: MessageService) { }
+    constructor(private requestService: RequestService, private messageService: MessageService) { }
+    
 
     ngOnInit() {
         this.loading = true;
@@ -71,7 +72,7 @@ export class RequestsComponent implements OnInit {
                 this.loading = false;
                 this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
             }
-        });
+      });
     }
 
     customSort(event: any) {

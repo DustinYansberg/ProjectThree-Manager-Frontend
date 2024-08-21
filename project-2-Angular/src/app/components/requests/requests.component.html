@@ -4,21 +4,23 @@
             <p-toast></p-toast>
             <p-toolbar styleClass="mb-4">
                 <ng-template pTemplate="left">
-                    <div class="my-2">
-                        <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
-                        <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedEmployees()" [disabled]="!selectedEmployees || !selectedEmployees.length"></button>
-                    </div>
+                  <div class="my-2">
+                    <button pButton pRipple label="New Request" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+                    <button pButton pRipple label="Approve Selected" icon="pi pi-check" class="p-button-success mr-2" (click)="openNew()"></button>
+                    <button pButton pRipple label="Deny Selected" icon="pi pi-ban" class="p-button-warning mr-2" (click)="openNew()"></button>
+                    <!--<button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedEmployees()" [disabled]="!selectedEmployees || !selectedEmployees.length"></button>-->
+                  </div>
                 </ng-template>
 
                 <ng-template pTemplate="right">
-                    <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help" (click)="dt.exportCSV()"></button>
+                    <!--<button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help" (click)="dt.exportCSV()"></button>-->
                 </ng-template>
             </p-toolbar>
 
-            <p-table #dt [loading]="loading" [value]="employees" [customSort]="true" (sortFunction)="customSort($event)" [columns]="cols" responsiveLayout="scroll" [rows]="10" [globalFilterFields]="['displayName','email']" [paginator]="true" [rowsPerPageOptions]="[10,20,30,50,100]" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [(selection)]="selectedEmployees" selectionMode="multiple" [rowHover]="true" dataKey="id">
+            <p-table #dt [loading]="loading" [value]="employees" [customSort]="true" (sortFunction)="customSort($event)" [columns]="cols" responsiveLayout="scroll" [rows]="10" [globalFilterFields]="['displayName','email']" [paginator]="true" [rowsPerPageOptions]="[10,20,30,50,100]" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [rowHover]="true" dataKey="id" [(selection)]="selectedEmployees" selectionMode="multiple" >
                 <ng-template pTemplate="caption">
                     <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-                        <h5 class="m-0">Manage Employees</h5>
+                        <h5 class="m-0">Active Requests</h5>
                         <span class="block mt-2 md:mt-0 p-input-icon-left">
                             <i class="pi pi-search"></i>
                             <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."  class="w-full sm:w-auto"/>
@@ -27,12 +29,12 @@
                 </ng-template>
                 <ng-template pTemplate="header">
                     <tr>
-                        <th style="width: 3rem">
+                      <th style="width:3rem">
                             <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                         </th>
-                        <th pSortableColumn="displayName">Display Name <p-sortIcon field='displayName'></p-sortIcon></th>
-                        <th pSortableColumn="emails">Email <p-sortIcon field="emails"></p-sortIcon></th>
-                        <th pSortableColumn="managerDisplayName">Manager <p-sortIcon field='managerDisplayName'></p-sortIcon></th>
+                        <th pSortableColumn="displayName">Username <p-sortIcon field='displayName'></p-sortIcon></th>
+                        <th pSortableColumn="emails">Role <p-sortIcon field="emails"></p-sortIcon></th>
+                        <th pSortableColumn="managerDisplayName">Notes <p-sortIcon field='managerDisplayName'></p-sortIcon></th>
                         <th></th>
                     </tr>
                 </ng-template>
@@ -42,65 +44,55 @@
                             <p-tableCheckbox [value]="employee"></p-tableCheckbox>
                         </td>
                         <td style="width:30%; min-width:10rem; max-width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                            <span class="p-column-title">Display Name</span>
+                            <span class="p-column-title">Username</span>
                             <a [routerLink]="['/employeedetail', employee.id]" title="{{employee.displayName || employee.id}}">
                                 {{ (employee.displayName || employee.id) | slice:0:20 }}{{ (employee.displayName || employee.id).length > 20 ? '...' : '' }}
                             </a>
                         </td>
                         <td style="width:30%; min-width:10rem; max-width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                            <span class="p-column-title">Email</span>
+                          <span class="p-column-title">Role</span>
                             <a [href]="'mailto:' + employee.emails[0].value" title="{{ employee.emails[0].value }}">
                                 {{ employee.emails[0].value | slice:0:20 }}{{ employee.emails[0].value.length > 20 ? '...' : '' }}
                             </a>
                         </td>
                         <td style="width:30%; min-width:8rem; max-width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                            <span class="p-column-title" title="{{ employee.displayName }}">Manager</span>
+                            <span class="p-column-title" title="{{ employee.displayName }}">Notes</span>
                             {{ employee.manager.displayName | slice:0:20 }}
                         </td>
                         <td>
-                            <div class="flex">
-                                <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editEmployee(employee)"></button>
-                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteEmployee(employee)"></button>
-                            </div>
+                          <div class="flex">
+                            <button pButton pRipple icon="pi pi-info" class="p-button-rounded p-button-success mr-2" (click)="editEmployee(employee)"></button>
+                            <button pButton pRipple icon="pi pi-check" class="p-button-rounded p-button-success mr-2" (click)="editEmployee(employee)"></button>
+                            <button pButton pRipple icon="pi pi-ban" class="p-button-rounded p-button-warning" (click)="deleteEmployee(employee)"></button>
+                          </div>
                         </td>
                     </tr>
                 </ng-template>
             </p-table>
         </div>
 
-        <p-dialog [(visible)]="employeeDialog" [style]="{width: '450px'}" header="Employee Details" [modal]="true" class="p-fluid">
-            <ng-template pTemplate="content">
-                <div class="field">
-                    <label for="userName">User Name</label>
-                    <input disabled="{{!creatingEmployee}}" type="text" pInputText id="userName" [(ngModel)]="employee.userName" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !employee.displayName}"/>
-                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !employee.displayName">User Name is required.</small>
-                </div>
-                <div class="field">
-                    <label for="firstName">First Name</label>
-                    <input type="text" pInputText id="givenName" [(ngModel)]="employee.name.givenName"/>
-                </div> 
-                <div class="field">
-                    <label for="lastName">Last Name</label>
-                    <input type="text" pInputText id="familyName" [(ngModel)]="employee.name.familyName"/>
-                </div> 
-                <div class="field">
-                    <label for="displayName">Display Name</label>
-                    <input type="text" pInputText id="displayName" [(ngModel)]="employee.displayName" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !employee.displayName}"/>
-                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !employee.displayName">Display Name is required.</small>
-                </div>  
-                <div class="field">
-                    <label for="email">Email</label>
-                    <input type="text" pInputText id="email" [(ngModel)]="employee.emails[0].value"/>
-                </div> 
-                <div class="field">
-                    <label for="password">Password</label>
-                    <div class="p-inputgroup">
-                        <input [type]="passwordFieldType" pInputText id="password" [(ngModel)]="employee.password" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !employee.password}"/>
-                        <button type="button" pButton icon="{{passwordFieldType === 'password' ? 'pi pi-eye' : 'pi pi-eye-slash'}}" (click)="togglePasswordVisibility()"></button>
-                    </div>
-                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !employee.password">Password is required.</small>
-                </div>
-            </ng-template>
+        <p-dialog [(visible)]="employeeDialog" [style]="{width: '450px'}" header="Request Details" [modal]="true" class="p-fluid">
+          <ng-template pTemplate="content">
+            <div class="field">
+              <label for="userName">Username</label>
+              <input disabled="{{!creatingEmployee}}" type="text" pInputText id="userName" [(ngModel)]="employee.userName" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !employee.displayName}" />
+              <small class="ng-dirty ng-invalid" *ngIf="submitted && !employee.displayName">Role is required.</small>
+            </div>
+            <div class="field">
+              <label for="userName">Role</label>
+              <input disabled="{{!creatingEmployee}}" type="text" pInputText id="userName" [(ngModel)]="employee.userName" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !employee.displayName}" />
+              <small class="ng-dirty ng-invalid" *ngIf="submitted && !employee.displayName">Role is required.</small>
+            </div>
+            <div class="field">
+              <label for="userName">Note</label>
+              <textarea rows="5"
+                        cols="30"
+                        pInputTextarea
+                        [autoResize]="true"
+                        [(ngModel)]="value">
+               </textarea>
+            </div>
+          </ng-template>
 
             <ng-template pTemplate="footer">
                 <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
