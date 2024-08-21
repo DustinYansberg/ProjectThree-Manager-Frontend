@@ -45,7 +45,6 @@ export class EmployeesComponent implements OnInit {
     ngOnInit() {
         this.loading = true;
         this.employeeService.getAllEmployees()
-        .pipe(timeout(20000)) // 20 seconds timeout
         .subscribe({
             next: (response) => {
                 console.log(response);

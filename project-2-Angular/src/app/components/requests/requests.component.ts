@@ -9,230 +9,238 @@ import { Manager } from 'src/app/Models/manager';
 import { Name } from 'src/app/Models/name';
 
 import { RequestService } from 'src/app/Services/request.service';
+import { Request } from '../../Models/request';
+import { Role } from '../../Models/role';
 
 @Component({
-    templateUrl: './requests.component.html',
-    providers: [MessageService]
+		templateUrl: './requests.component.html',
+		providers: [MessageService]
 })
 export class RequestsComponent implements OnInit {
+		
+		requests: Request[] = [];
+
+  defaultRequest: Request = new Request("", new Employee("", "", new Name("", "", ""), "", "", false, "", [], new EmployeeDetail("", "", "", [], [], []), new Manager("", "", "")), new Role("", "", false), "");
+
+		selectedRequest: Request[] = [];
+
+		requestDialog: boolean = false;
+
+		denyRequestDialog: boolean = false;
+
+    denyRequestsDialog: boolean = false;
     
-    employees: any[] = [];
-    
-    defaultEmployee: Employee = new Employee("", "", new Name("", "", ""), "", "", false, "", [], new EmployeeDetail("", "", "", [], [], []), new Manager("", "", ""));
+    approveRequestDialog: boolean = false;
 
-    selectedEmployees: Employee[] = [];
+    approveRequestsDialog: boolean = false;
+		
+		submitted: boolean = false;
 
-    employeeDialog: boolean = false;
+		request: Request = this.defaultRequest;
 
-    deleteEmployeeDialog: boolean = false;
+		cols: any[];
 
-    deleteEmployeesDialog: boolean = false;
-    
-    submitted: boolean = false;
+		loading: boolean = false;
 
-    employee: Employee = this.defaultEmployee;
+		constructor(private requestService: RequestService, private messageService: MessageService) { }
+		
 
-    cols: any[];
+		ngOnInit() {
+				this.loading = true;
+				this.requestService.getAllRequests()
+				.subscribe({
+						next: (response) => {
+								console.log(response);
+								let body: any = response.body;
 
-    loading: boolean = false;
+								body.forEach((resource: Request) => {
+										// Put additional logic here if needed
+								});
+								this.requests = body;
 
-    creatingEmployee: boolean;
+								this.cols = [
+										{ field: 'username', header: 'Username' },
+										{ field: 'role', header: 'Role' },
+										{ field: 'note', header: 'Note' }
+								];
 
-    passwordFieldType: string = 'password';
+								this.loading = false;
+						},
+						error: (err) => {
+								console.log(err);
+								this.loading = false;
+								this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
+						}
+			});
+		}
 
-    constructor(private requestService: RequestService, private messageService: MessageService) { }
-    
+		customSort(event: any) {
+				event.data.sort((data1: any, data2: any) => {
+						let value1 = this.resolveFieldData(data1, event.field);
+						let value2 = this.resolveFieldData(data2, event.field);
+						let result = null;
 
-    ngOnInit() {
-        this.loading = true;
-        this.requestService.getAllEmployees()
-        .pipe(timeout(20000)) // 20 seconds timeout
-        .subscribe({
-            next: (response) => {
-                console.log(response);
-                let body: any = response.body;
+						// Check if value1 and value2 are objects and pull out their 'value' property
+						if (typeof value1 === 'object' && value1 !== null) {
+								value1 = value1[0].value;
+						}
+						if (typeof value2 === 'object' && value2 !== null) {
+								value2 = value2[0].value;
+						}
+		
+						if (value1 == null && value2 != null)
+								result = -1;
+						else if (value1 != null && value2 == null)
+								result = 1;
+						else if (value1 == null && value2 == null)
+								result = 0;
+						else if (typeof value1 === 'string' && typeof value2 === 'string')
+								result = value1.localeCompare(value2);
+						else
+								result = (value1 < value2) ? -1 : (value1 > value2) ? 1 : 0;
+		
+						return (event.order * result);
+				});
+		}
 
-                body.forEach((resource: Employee) => {
-                    if (!resource.emails || !resource.emails[0] || !resource.emails[0].value) {
-                        resource.emails = [new Email("", " ", true)];
-                    }
-                });
-                this.employees = body;
+		resolveFieldData(data: any, field: string): any {
+				if (data && field) {
+						let fields = field.split('.');
+						let value = data;
+						for (let i = 0; i < fields.length; i++) {
+								if (value == null) {
+										return null;
+								}
+								value = value[fields[i]];
+						}
+						return value;
+				} else {
+						return null;
+				}
+		}
 
-                this.cols = [
-                    { field: 'displayName', header: 'Display Name' },
-                    { field: 'emails', header: 'Email' },
-                    { field: 'urn:ietf:params:scim:schemas:extension:enterprise:2.0:User.manager.displayName', header: 'Manager' }
-                ];
-
-                this.loading = false;
-            },
-            error: (err) => {
-                console.log(err);
-                this.loading = false;
-                this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
-            }
-      });
+		denySelectedEmployees() {
+				this.denyRequestsDialog = true;
     }
 
-    customSort(event: any) {
-        event.data.sort((data1: any, data2: any) => {
-            let value1 = this.resolveFieldData(data1, event.field);
-            let value2 = this.resolveFieldData(data2, event.field);
-            let result = null;
+    approveSelectedEmployees() {
+      this.approveRequestsDialog = true;
+    }
 
-            // Check if value1 and value2 are objects and pull out their 'value' property
-            if (typeof value1 === 'object' && value1 !== null) {
-                value1 = value1[0].value;
-            }
-            if (typeof value2 === 'object' && value2 !== null) {
-                value2 = value2[0].value;
-            }
-    
-            if (value1 == null && value2 != null)
-                result = -1;
-            else if (value1 != null && value2 == null)
-                result = 1;
-            else if (value1 == null && value2 == null)
-                result = 0;
-            else if (typeof value1 === 'string' && typeof value2 === 'string')
-                result = value1.localeCompare(value2);
-            else
-                result = (value1 < value2) ? -1 : (value1 > value2) ? 1 : 0;
-    
-            return (event.order * result);
+		editRequest(request: Request) {
+				this.request = { ...request };
+				this.requestDialog = true;
+		}
+
+    denyRequest(request: Request) {
+          this.denyRequestDialog = true;
+				  this.request = { ...request };
+     }
+
+    approveRequest(request: Request) {
+      this.approveRequestDialog = true;
+      this.request = { ...request };
+    }
+
+    confirmDenySelected() {
+				this.denyRequestDialog = false;
+				this.requests = this.requests.filter(val => !this.selectedRequest.includes(val));
+				for (let i = 0; i < this.selectedRequest.length; i++) {
+						this.requestService.denyRequest(this.selectedRequest[i].id).subscribe({ next: (response) => {
+								this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Request Denied', life: 3000 });
+						} });
+				}
+				this.selectedRequest = [];
+  }
+
+    confirmApproveSelected() {
+      this.approveRequestDialog = false;
+      this.requests = this.requests.filter(val => !this.selectedRequest.includes(val));
+      for (let i = 0; i < this.selectedRequest.length; i++) {
+        this.requestService.approveRequest(this.selectedRequest[i].id).subscribe({
+          next: (response) => {
+            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Request Approved', life: 3000 });
+          }
         });
+      }
+      this.selectedRequest = [];
     }
 
-    resolveFieldData(data: any, field: string): any {
-        if (data && field) {
-            let fields = field.split('.');
-            let value = data;
-            for (let i = 0; i < fields.length; i++) {
-                if (value == null) {
-                    return null;
-                }
-                value = value[fields[i]];
-            }
-            return value;
-        } else {
-            return null;
-        }
-    }
+		confirmDeny() {
+				this.denyRequestDialog = false;
+				this.requestService.denyRequest(this.request.id)
+				.pipe(timeout(5000)) // 5 seconds timeout
+				.subscribe({
+						next: (response) => {
+								this.requests = this.requests.filter(val => val.id !== this.request.id);
+								this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Request Denied', life: 3000 });
+						},
+						error: (err) => {
+								this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
+						}
+				});
+				this.request = this.defaultRequest;
+  }
 
-    openNew() {
-        this.employee = this.defaultEmployee;
-        this.submitted = false;
-        this.employeeDialog = true;
-        this.creatingEmployee = true;
-    }
-
-    deleteSelectedEmployees() {
-        this.deleteEmployeesDialog = true;
-    }
-
-    editEmployee(employee: Employee) {
-        this.employee = { ...employee };
-        this.employeeDialog = true;
-        this.creatingEmployee = false;
-    }
-
-    deleteEmployee(employee: Employee) {
-        this.deleteEmployeeDialog = true;
-        this.employee = { ...employee };
-    }
-
-    confirmDeleteSelected() {
-        this.deleteEmployeesDialog = false;
-        this.employees = this.employees.filter(val => !this.selectedEmployees.includes(val));
-        for (let i = 0; i < this.selectedEmployees.length; i++) {
-            this.requestService.deleteEmployee(this.selectedEmployees[i].id).subscribe({ next: (response) => {
-                this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Employee Deleted', life: 3000 });
-            } });
-        }
-        this.selectedEmployees = [];
-    }
-
-    confirmDelete() {
-        this.deleteEmployeeDialog = false;
-        this.requestService.deleteEmployee(this.employee.id)
+    confirmApprove() {
+      this.approveRequestDialog = false;
+      this.requestService.approveRequest(this.request.id)
         .pipe(timeout(5000)) // 5 seconds timeout
         .subscribe({
-            next: (response) => {
-                this.employees = this.employees.filter(val => val.id !== this.employee.id);
-                this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Employee Deleted', life: 3000 });
-            },
-            error: (err) => {
-                this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
-            }
+          next: (response) => {
+            this.requests = this.requests.filter(val => val.id !== this.request.id);
+            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Request Approved', life: 3000 });
+          },
+          error: (err) => {
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
+          }
         });
-        this.employee = this.defaultEmployee;
+      this.request = this.defaultRequest;
     }
 
-    hideDialog() {
-        this.employeeDialog = false;
-        this.submitted = false;
-        this.creatingEmployee = false;
-    }
+		hideDialog() {
+				this.requestDialog = false;
+				this.submitted = false;
+		}
 
-    saveEmployee() {
-        this.submitted = true;
-    
-        if (this.employee.userName?.trim()) {
-            if (this.employee.id) {
-                 this.requestService.updateEmployee(this.employee)
-                    .pipe(timeout(5000)) // 5 seconds timeout
-                    .subscribe({
-                        next: (response) => {
-                            console.log(response);
-                            this.employee.id = response.body['id'];
-                            let index = this.findIndexById(this.employee.id);
-                            this.employees[index] = this.employee;
-                            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Employee Updated', life: 3000 });
-                        },
-                        error: (err) => {
-                            this.messageService.add({ severity: 'error', summary: 'Error', detail: "Unable to update employee, check fields and try again", life: 3000 });
-                        }
-                    });
-            } else if (this.creatingEmployee) {
-                this.requestService.createEmployee(this.employee)
-                    .pipe(timeout(5000)) // 5 seconds timeout
-                    .subscribe({
-                        next: (response) => {
-                            console.log(response);
-                            this.employee.id = response.body['id'];
-                            this.employees = [ ...this.employees, this.employee ];
-                            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Employee Created', life: 3000 });
-                        },
-                        error: (err) => {
-                            this.messageService.add({ severity: 'error', summary: 'Error', detail: "Unable to create employee, check fields and try again", life: 3000 });
-                        }
-                    });
-            }
+		saveRequest() {
+				this.submitted = true;
+		
+				if (this.request.id?.trim()) {
+						if (this.request.id) {
+								 this.requestService.updateRequest(this.request)
+										.pipe(timeout(5000)) // 5 seconds timeout
+										.subscribe({
+												next: (response) => {
+														console.log(response);
+														this.request.id = response.body['id'];
+														let index = this.findIndexById(this.request.id);
+														this.requests[index] = this.request;
+														this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Request Updated', life: 3000 });
+												},
+												error: (err) => {
+														this.messageService.add({ severity: 'error', summary: 'Error', detail: "Unable to update request, check fields and try again", life: 3000 });
+												}
+										});
+						} 
+				}
+				this.requestDialog = false;
+		}
 
-        this.employeeDialog = false;
-        this.creatingEmployee = false;
-        }
-    }
+		findIndexById(id: string): number {
+				let index = -1;
+				for (let i = 0; i < this.requests.length; i++) {
+						if (this.requests[i].id === id) {
+								index = i;
+								break;
+						}
+				}
 
-    togglePasswordVisibility() {
-        this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
-      }
+				return index;
+		}
 
-    findIndexById(id: string): number {
-        let index = -1;
-        for (let i = 0; i < this.employees.length; i++) {
-            if (this.employees[i].id === id) {
-                index = i;
-                break;
-            }
-        }
-
-        return index;
-    }
-
-    onGlobalFilter(table: Table, event: Event) {
-        table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
-    }
-    
+		onGlobalFilter(table: Table, event: Event) {
+				table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+		}
+		
 }

@@ -68,7 +68,6 @@ export class AccountsComponent implements OnInit {
     ngOnInit() {
         this.loading = true;
         this.accountService.getAllAccounts()
-        .pipe(timeout(20000)) // 20 seconds timeout
         .subscribe({
             next: (response) => {
                 let body: any = response.body;
