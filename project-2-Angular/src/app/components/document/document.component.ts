@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { LazyLoadEvent, MessageService, SelectItem, SortEvent } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { timeout } from 'rxjs';
 import { Document } from 'src/app/Models/document';

@@ -18,6 +18,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { DialogModule } from 'primeng/dialog';
 import { DocumentService } from 'src/app/Services/document.service';
+import { EmployeeService } from '../../Services/employee.service';
 
 @NgModule({
 	imports: [
@@ -39,7 +40,8 @@ import { DocumentService } from 'src/app/Services/document.service';
         DialogModule
 	],
 	providers: [
-		DocumentService 
+    DocumentService,
+    EmployeeService
 	  ],
 	declarations: [DocumentComponent]
 })
