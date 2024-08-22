@@ -18,7 +18,7 @@ export class EmployeesComponent implements OnInit {
 
     employees: any[] = [];
     
-    defaultEmployee: Employee = new Employee("", "", new Name("", "", ""), "", "", false, "", [], new EmployeeDetail("", "", "", [], [], []), new Manager("", "", ""));
+    defaultEmployee: Employee = new Employee("", "", new Name("", "", ""), "", "employee", false, "", [new Email("", "", true)], new EmployeeDetail("", "", "", [], [], []), new Manager("", "", ""));
 
     selectedEmployees: Employee[] = [];
 
@@ -58,9 +58,9 @@ export class EmployeesComponent implements OnInit {
                 this.employees = body;
 
                 this.cols = [
+                    { field: 'userName', header: 'Username' },
                     { field: 'displayName', header: 'Display Name' },
                     { field: 'emails', header: 'Email' },
-                    { field: 'urn:ietf:params:scim:schemas:extension:enterprise:2.0:User.manager.displayName', header: 'Manager' }
                 ];
 
                 this.loading = false;
@@ -174,10 +174,11 @@ export class EmployeesComponent implements OnInit {
     }
 
     saveEmployee() {
-        this.submitted = true;
+      this.submitted = true;
     
         if (this.employee.userName?.trim()) {
-            if (this.employee.id) {
+          if (this.employee.id) {
+                console.log(this.employee);
                 this.employeeService.updateEmployee(this.employee)
                     .pipe(timeout(5000)) // 5 seconds timeout
                     .subscribe({
@@ -193,6 +194,7 @@ export class EmployeesComponent implements OnInit {
                         }
                     });
             } else if (this.creatingEmployee) {
+              console.log(this.employee);
                 this.employeeService.createEmployee(this.employee)
                     .pipe(timeout(5000)) // 5 seconds timeout
                     .subscribe({
