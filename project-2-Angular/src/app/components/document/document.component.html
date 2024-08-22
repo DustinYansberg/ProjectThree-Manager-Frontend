@@ -1,0 +1,71 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="right">
+                    <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help" (click)="dt.exportCSV()"></button>
+                </ng-template>
+            </p-toolbar>
+
+            <p-table #dt [loading]="loading" [value]="documents" [customSort]="true" (sortFunction)="customSort($event)" [columns]="cols" responsiveLayout="scroll" [rows]="10" [globalFilterFields]="['name']" [paginator]="true" [rowsPerPageOptions]="[10,20,30,50,100]" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"   [rowHover]="true" dataKey="id">
+                <ng-template pTemplate="caption">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                        <h5 class="m-0">Manage Documents</h5>
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."  class="w-full sm:w-auto"/>
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="name"> Name <p-sortIcon field='name'></p-sortIcon></th>
+                        <th pSortableColumn="fileData"> Link <p-sortIcon field="fileData"></p-sortIcon></th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-document>
+                    <tr>
+                        <td style="width:30%; min-width:8rem; max-width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            <span class="p-column-title" title="{{ document.name }}">Name</span>
+                        </td>
+                        <td style="width:30%; min-width:8rem; max-width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            <span class="p-column-title" title="{{ document.fileData }}">File</span>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <p-dialog [(visible)]="documentDialog" [style]="{width: '450px'}" header="Create Document" [modal]="true" class="p-fluid">
+            <ng-template pTemplate="content">
+                <div class="field">
+                    <label for="identity">Identity</label>
+                    <p-dropdown [options]="users" [(ngModel)]="document.identityId" name="identity" placeholder="Select Identity" [filter]="true" optionLabel="label" optionValue="value" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !document.identityId}"></p-dropdown> 
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !document.identityId">Identity is required.</small>
+                </div>
+                <div class="field">
+                    <label for="name">Name</label>
+                    <input type="text" pInputText id="name" [(ngModel)]="document.name"/>
+                </div> 
+                <div class="field">
+                    <label for="fileData">File</label>
+                    <input type="text" pInputText id="fileData" [(ngModel)]="document.fileData"/>
+                </div> 
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                <button pButton pRipple label="Create" icon="pi pi-check" class="p-button-text" (click)="createDocument()"></button>
+            </ng-template>
+        </p-dialog>
+
+    </div>
+</div>
