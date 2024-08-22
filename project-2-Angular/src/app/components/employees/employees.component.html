@@ -30,40 +30,41 @@
                         <th style="width: 3rem">
                             <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                         </th>
-                        <th pSortableColumn="displayName">Display Name <p-sortIcon field='displayName'></p-sortIcon></th>
-                        <th pSortableColumn="emails">Email <p-sortIcon field="emails"></p-sortIcon></th>
-                        <th pSortableColumn="managerDisplayName">Manager <p-sortIcon field='managerDisplayName'></p-sortIcon></th>
+                        <th pSortableColumn="userName">Username <p-sortIcon field='userName'></p-sortIcon></th>
+                        <th pSortableColumn="displayName">Display Name <p-sortIcon field="displayName"></p-sortIcon></th>
+                        <th pSortableColumn="email">Email <p-sortIcon field='email'></p-sortIcon></th>
                         <th></th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-employee>
-                    <tr>
-                        <td>
-                            <p-tableCheckbox [value]="employee"></p-tableCheckbox>
-                        </td>
-                        <td style="width:30%; min-width:10rem; max-width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                            <span class="p-column-title">Display Name</span>
-                            <a [routerLink]="['/employeedetail', employee.id]" title="{{employee.displayName || employee.id}}">
-                                {{ (employee.displayName || employee.id) | slice:0:20 }}{{ (employee.displayName || employee.id).length > 20 ? '...' : '' }}
-                            </a>
-                        </td>
-                        <td style="width:30%; min-width:10rem; max-width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                            <span class="p-column-title">Email</span>
-                            <a [href]="'mailto:' + employee.emails[0].value" title="{{ employee.emails[0].value }}">
-                                {{ employee.emails[0].value | slice:0:20 }}{{ employee.emails[0].value.length > 20 ? '...' : '' }}
-                            </a>
-                        </td>
-                        <td style="width:30%; min-width:8rem; max-width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                            <span class="p-column-title" title="{{ employee.displayName }}">Manager</span>
-                            {{ employee.manager.displayName | slice:0:20 }}
-                        </td>
-                        <td>
-                            <div class="flex">
-                                <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editEmployee(employee)"></button>
-                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteEmployee(employee)"></button>
-                            </div>
-                        </td>
-                    </tr>
+                  <tr>
+                    <td>
+                      <p-tableCheckbox [value]="employee"></p-tableCheckbox>
+                    </td>
+                    <td style="width:30%; min-width:10rem; max-width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                      <span class="p-column-title">Username</span>
+                      <a [routerLink]="['/employeedetail', employee.id]" title="{{employee.userName || employee.id}}">
+                        {{ (employee.userName || employee.id) | slice:0:20 }}{{ (employee.userName || employee.id).length > 20 ? '...' : '' }}
+                      </a>
+                    </td>
+                    <td style="width:30%; min-width:8rem; max-width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                      <span class="p-column-title" title="{{ employee.displayName }}">Display Name</span>
+                      {{ employee.displayName | slice:0:20 }}
+                    </td>
+                    <td style="width:30%; min-width:10rem; max-width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                      <span class="p-column-title">Email</span>
+                      <a [href]="'mailto:' + employee.emails[0].value" title="{{ employee.emails[0].value }}">
+                        {{ employee.emails[0].value | slice:0:20 }}{{ employee.emails[0].value.length > 20 ? '...' : '' }}
+                      </a>
+                    </td>
+
+                    <td>
+                      <div class="flex">
+                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editEmployee(employee)"></button>
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteEmployee(employee)"></button>
+                      </div>
+                    </td>
+                  </tr>
                 </ng-template>
             </p-table>
         </div>

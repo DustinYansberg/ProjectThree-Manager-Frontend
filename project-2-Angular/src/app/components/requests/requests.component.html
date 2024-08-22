@@ -1,0 +1,144 @@
+<div class="grid">
+  <div class="col-12">
+    <div class="card px-6 py-6">
+      <p-toast></p-toast>
+      <p-toolbar styleClass="mb-4">
+        <ng-template pTemplate="left">
+          <div class="my-2">
+            <!--<button pButton pRipple label="New Request" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>-->
+            <button pButton pRipple label="Approve" icon="pi pi-check" class="p-button-success mr-2" (click)="openNew()" [disabled]="!selectedRequests || !selectedRequests.length"></button>
+            <button pButton pRipple label="Deny" icon="pi pi-ban" class="p-button-danger mr-2" (click)="openNew()" [disabled]="!selectedRequests || !selectedRequests.length"></button>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="right">
+          <!--<button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help" (click)="dt.exportCSV()"></button>-->
+        </ng-template>
+      </p-toolbar>
+
+      <p-table #dt [loading]="loading" [value]="requests" [customSort]="true" (sortFunction)="customSort($event)" [columns]="cols" responsiveLayout="scroll" [rows]="10" [globalFilterFields]="['displayName','email']" [paginator]="true" [rowsPerPageOptions]="[10,20,30,50,100]" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [rowHover]="true" dataKey="id" [(selection)]="selectedRequest" selectionMode="multiple">
+        <ng-template pTemplate="caption">
+          <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+            <h5 class="m-0">Active Requests</h5>
+            <span class="block mt-2 md:mt-0 p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..." class="w-full sm:w-auto" />
+            </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width:3rem">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th pSortableColumn="displayName">Username <p-sortIcon field='displayName'></p-sortIcon></th>
+            <th pSortableColumn="emails">Role <p-sortIcon field="emails"></p-sortIcon></th>
+            <th pSortableColumn="managerDisplayName">Notes <p-sortIcon field='managerDisplayName'></p-sortIcon></th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-request>
+          <tr>
+            <td>
+              <p-tableCheckbox [value]="request"></p-tableCheckbox>
+            </td>
+            <td style="width:30%; min-width:10rem; max-width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              <span class="p-column-title">Username</span>
+              <a [routerLink]="['/requestdetail', request.id]" title="{{request.id}}">
+                {{ (request.employee.displayName || request.id) | slice:0:20 }}{{ (request.employee.displayName || request.id).length > 20 ? '...' : '' }}
+              </a>
+            </td>
+            <td style="width:30%; min-width:10rem; max-width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              <span class="p-column-title">Role</span>
+              {{ request.role.displayableName}}
+            </td>
+            <td style="width:30%; min-width:8rem; max-width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              <span class="p-column-title" title="{{ request.note }}">Notes</span>
+              {{ request.note }}
+            </td>
+            <td>
+              <div class="flex">
+                <button pButton pRipple icon="pi pi-info" class="p-button-rounded p-button- mr-2" (click)="editRequest(request)"></button>
+                <button pButton pRipple icon="pi pi-check" class="p-button-rounded p-button-success mr-2" (click)="approveRequest(request)"></button>
+                <button pButton pRipple icon="pi pi-ban" class="p-button-rounded p-button-warning" (click)="denyRequest(request)"></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <p-dialog [(visible)]="requestDialog" [style]="{width: '450px'}" header="Request Details" [modal]="true" class="p-fluid">
+      <ng-template pTemplate="content">
+        <div class="field">
+          <label for="userName">Username</label>
+          <input type="text" pInputText id="userName" [(ngModel)]="request.employee.username" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !request.employee.displayName}" />
+          <small class="ng-dirty ng-invalid" *ngIf="submitted && !request.employee.displayName">Employee Username is required.</small>
+        </div>
+        <div class="field">
+          <label for="userName">Role</label>
+          <input type="text" pInputText id="role" [(ngModel)]="request.role.value" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !request.role.value}" />
+          <small class="ng-dirty ng-invalid" *ngIf="submitted && !request.role.value">Role is required.</small>
+        </div>
+        <div class="field">
+          <label for="userName">Note</label>
+          <textarea rows="5"
+                    cols="30"
+                    pInputTextarea
+                    [autoResize]="true"
+                    [(ngModel)]="request.note">
+               </textarea>
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveRequest()"></button>
+      </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="denyRequestDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+      <div class="flex align-items-center justify-content-center">
+        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+        <span *ngIf="request">Are you sure you want to deny <b>{{request.id}}</b>?</span>
+      </div>
+      <ng-template pTemplate="footer">
+        <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="denyRequestDialog = false"></button>
+        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="confirmDeny()"></button>
+      </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="approveRequestDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+      <div class="flex align-items-center justify-content-center">
+        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+        <span *ngIf="request">Are you sure you want to approve <b>{{request.id}}</b>?</span>
+      </div>
+      <ng-template pTemplate="footer">
+        <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="approveRequestDialog = false"></button>
+        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="confirmApprove()"></button>
+      </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="denyRequestsDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+      <div class="flex align-items-center justify-content-center">
+        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+        <span>Are you sure you want to deny the selected requests?</span>
+      </div>
+      <ng-template pTemplate="footer">
+        <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="denyRequestsDialog = false"></button>
+        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="confirmDenySelected()"></button>
+      </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="approveRequestsDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+      <div class="flex align-items-center justify-content-center">
+        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+        <span>Are you sure you want to approve the selected requests?</span>
+      </div>
+      <ng-template pTemplate="footer">
+        <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="approveRequestsDialog = false"></button>
+        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="confirmApproveSelected()"></button>
+      </ng-template>
+    </p-dialog>
+  </div>
+</div>

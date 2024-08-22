@@ -15,6 +15,8 @@ import { AuthGuard } from './Services/auth.guard';
                     { path: 'employeedetail/:id', canActivate: [AuthGuard], loadChildren: () => import('./components/employee-detail/employee-detail.module').then(m => m.EmployeeDetailModule) },
                     { path: 'accounts', canActivate: [AuthGuard], loadChildren: () => import('./components/accounts/accounts.module').then(m => m.AccountsModule) },
                     { path: 'accountdetail/:id', canActivate: [AuthGuard], loadChildren: () => import('./components/account-detail/account-detail.module').then(m => m.AccountDetailModule) },
+                  { path: 'accountdetail/:id', canActivate: [AuthGuard], loadChildren: () => import('./components/account-detail/account-detail.module').then(m => m.AccountDetailModule) },
+                  { path: 'requests', canActivate: [AuthGuard], loadChildren: () => import('./components/requests/requests.module').then(m => m.RequestsModule) },
                     { path: 'documents', canActivate: [AuthGuard], loadChildren: () => import('./components/document/document.module').then(m => m.DocumentModule) },
                     { path: 'uikit', loadChildren: () => import('./demo/components/uikit/uikit.module').then(m => m.UIkitModule) },
                     { path: 'utilities', loadChildren: () => import('./demo/components/utilities/utilities.module').then(m => m.UtilitiesModule) },

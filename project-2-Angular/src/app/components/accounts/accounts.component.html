@@ -43,19 +43,19 @@
                         </td>
                         <td style="width:30%; min-width:10rem; max-width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                             <span class="p-column-title">Entity User Name</span>
-                            <a [routerLink]="['/employeedetail', account.identity.value]" title="{{account.identity.userName || account.id}}">
-                                {{ (account.identity.userName || account.id) | slice:0:20 }}{{ (account.identity.userName || account.id).length > 20 ? '...' : '' }}
-                            </a>
+                            <span title="{{account.accountDisplayName || account.id}}">
+                              {{ (account.accountDisplayName || account.id) | slice:0:20 }}{{ (account.accountDisplayName || account.id).length > 20 ? '...' : '' }}
+                            </span>
                         </td>
                         <td style="width:30%; min-width:10rem; max-width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                             <span class="p-column-title">Account ID</span>
-                            <a [routerLink]="['/accountdetail', account.id]" title="{{account.id}}">
-                                {{ (account.id) | slice:0:20 }}{{ (account.id).length > 20 ? '...' : '' }}
+                            <a [routerLink]="['/accountdetail', account.accountId]" title="{{account.accountId}}">
+                              {{ (account.accountId) | slice:0:20 }}{{ (account.accountId).length > 20 ? '...' : '' }}
                             </a>
                         </td>
                         <td style="width:30%; min-width:8rem; max-width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                            <span class="p-column-title" title="{{ account.application.displayName }}">Application Name</span>
-                            {{ account.application.displayName }}
+                          <span class="p-column-title" title="{{ account.applicationDisplayName }}">Application Name</span>
+                          {{ account.applicationDisplayName }}
                         </td>
                         <td>
                             <div class="flex">
