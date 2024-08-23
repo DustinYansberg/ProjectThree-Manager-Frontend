@@ -18,26 +18,35 @@
                 <ng-template pTemplate="caption">
                     <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
                         <h5 class="m-0">Manage Documents</h5>
-                        <span class="block mt-2 md:mt-0 p-input-icon-left">
-                            <i class="pi pi-search"></i>
-                            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."  class="w-full sm:w-auto"/>
-                        </span>
+                        <div class="field">            
+                            <p-dropdown [options]="users" [(ngModel)]="document.identityId" name="identity" placeholder="Select Identity" [filter]="true" optionLabel="label" optionValue="value" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !document.identityId}"></p-dropdown> 
+                            <small class="ng-dirty ng-invalid" *ngIf="submitted && !document.identityId">Identity is required.</small>
+                        </div>
                     </div>
                 </ng-template>
                 <ng-template pTemplate="header">
                     <tr>
                         <th pSortableColumn="name"> Name <p-sortIcon field='name'></p-sortIcon></th>
                         <th pSortableColumn="fileData"> Link <p-sortIcon field="fileData"></p-sortIcon></th>
+                        <th > Completed</th>
+                        
                         <th></th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-document>
                     <tr>
-                        <td style="width:30%; min-width:8rem; max-width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                            <span class="p-column-title" title="{{ document.name }}">Name</span>
+                        <td style="width:33%; min-width:8rem; max-width: 33%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    {{ document.name }}
                         </td>
-                        <td style="width:30%; min-width:8rem; max-width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                            <span class="p-column-title" title="{{ document.fileData }}">File</span>
+                        <td style="width:33%; min-width:8rem; max-width: 33%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            <a href="{{ document.fileData }}">{{ document.fileData }}</a>
+                        </td>
+                        <td>
+                            <div style="padding-left: 15px;" class="align-items-center">
+                                <button *ngIf="document.completed" pButton pRipple icon="pi pi-check" class="p-button-rounded p-button-success"></button>
+                                
+                                <button *ngIf="!document.completed" pButton pRipple icon="pi pi-ban" class="p-button-rounded p-button-danger"></button>
+                              </div>
                         </td>
                     </tr>
                 </ng-template>

@@ -23,7 +23,7 @@ export class AppMenuComponent implements OnInit {
                     // view approve or deny requests from your employees
                     { label: 'Requests', icon: 'pi pi-fw pi-flag', routerLink: ['/requests'] },
                     // some frontend plugin or bonus feature
-                    { label: 'Documents', icon: 'pi pi-fw pi-check', routerLink: ['/documents'] }
+                    { label: 'Documents', icon: 'pi pi-fw pi-file-edit', routerLink: ['/documents'] }
                 ]
             }
         ];

@@ -24,7 +24,7 @@ export class DocumentComponent implements OnInit {
 
     documentsCompleted: Document[] = [];
     
-    defaultDocument: Document = new Document(0,"","", new Uint8Array ,false,null);
+    defaultDocument: Document = new Document(0,"","", "",false,null);
 
     documentDialog: boolean = false;
 
@@ -43,6 +43,8 @@ export class DocumentComponent implements OnInit {
     employee: Employee;
 
     employees: any[];
+    
+    searchedDocument: string;
 
     constructor(private documentService: DocumentService, private messageService: MessageService, private employeeService: EmployeeService) {}
 
@@ -63,6 +65,8 @@ export class DocumentComponent implements OnInit {
                 this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
             }
         });
+
+        this.getDocumentsByIdentity();
     }
 
     customSort(event: any) {
@@ -138,7 +142,8 @@ export class DocumentComponent implements OnInit {
 
     getDocumentsByIdentity(){
         this.loading = true;
-        this.documentService.getDocumentByIdentity(this.employee.id).subscribe(
+        this.documents = [];
+        this.documentService.getDocumentByIdentity("ac16000290f113888191156767f74341").subscribe(
             {next: (response) => {
                 console.log(response)
                 let body : any = response.body;
