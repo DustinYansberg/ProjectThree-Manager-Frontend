@@ -48,7 +48,7 @@ export class DocumentComponent implements OnInit {
 
     ngOnInit() {
         this.loading = true;
-        this.employeeService.getAllEmployees()
+        this.employeeService.getAllEmployees(1, 1000)
         .pipe(timeout(20000)) // 20 seconds timeout
         .subscribe({
             next: (response) => {

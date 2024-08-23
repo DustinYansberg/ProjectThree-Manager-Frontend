@@ -15,8 +15,8 @@ export class EmployeeService {
     return this.authService.getHeaders();
   }
 
-  getAllEmployees() {
-    return this.http.get(this.url + 'employee', { observe: 'response' });
+  getAllEmployees(index: number, row: number) {
+    return this.http.get(this.url + 'employee/page/' + index + "/" + row, { observe: 'response' });
   }
 
   getEmployeeById(id: string) {
