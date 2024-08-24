@@ -8,8 +8,8 @@ export class DocumentService {
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
-  // url: String = 'http://4.156.40.62:9001/document';
-  url: String = 'http://localhost:8085/document/';
+  url: String = 'http://4.156.40.62:9001/document/';
+  // url: String = 'http://localhost:8085/document/';
 
   private getHeaders() {
     return this.authService.getHeaders();
