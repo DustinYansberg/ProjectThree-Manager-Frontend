@@ -21,9 +21,11 @@ export class AccountsComponent implements OnInit {
 
     employees: Employee[] = [];
 
+    totalRecords: number = 0;
+
     applications: any[] = [];
 
-  defaultAccount = new Account("", "", "", true, "", [], [], "", "", "", new Meta(new Date(), new Date()));
+    defaultAccount = new Account("", "", "", true, "", [], [], "", "", "", new Meta(new Date(), new Date()));
 
     selectedAccounts: Account[] = [];
 
@@ -48,11 +50,12 @@ export class AccountsComponent implements OnInit {
         this.accountService.getAllAccounts()
         .subscribe({
             next: (response) => {
-                let body: any = response.body;
+            let body: any = response.body["Resources"];
+            this.totalRecords = response.body["itemsPerPage"];
 
                 console.log(body.Resources);
 
-                body.Resources.forEach((resource: any) => {
+                body.body.Resources.forEach((resource: any) => {
                     if (!resource.applicationDisplayName) {
                         resource.applicationDisplayName = resource.application.displayName;
                     }
@@ -74,7 +77,7 @@ export class AccountsComponent implements OnInit {
                 this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
             }
         });
-        this.employeeService.getAllEmployees()
+        this.employeeService.getAllEmployees(1, 1000)
         .pipe(timeout(20000)) // 20 seconds timeout
         .subscribe({
           next: (response) => {
