@@ -19,6 +19,7 @@ import { AppSidebarComponent } from "./app.sidebar.component";
 import { AppLayoutComponent } from "./app.layout.component";
 import { MenuModule } from 'primeng/menu'; // Import the MenuModule from primeng
 import { ButtonModule } from 'primeng/button';
+import { AuthModule } from '../components/auth/auth.module';
 
 @NgModule({
     declarations: [
@@ -30,6 +31,7 @@ import { ButtonModule } from 'primeng/button';
         AppLayoutComponent,
     ],
     imports: [
+        AuthModule,
         MenuModule,
         BrowserModule,
         ButtonModule,

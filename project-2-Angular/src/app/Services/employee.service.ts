@@ -1,38 +1,34 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Employee } from '../Models/employee';
-import { AuthService } from './auth.service';
 
 @Injectable()
 export class EmployeeService {
 
-  constructor(private http: HttpClient, private authService: AuthService) { }
+  constructor(private http: HttpClient) { }
 
   //url: String = 'http://4.156.40.62:9001/';
   url: String = 'http://localhost:8081/';
 
-  private getHeaders() {
-    return this.authService.getHeaders();
-  }
 
   getAllEmployees(index: number, row: number) {
     return this.http.get(this.url + 'employee/page/' + index + "/" + row, { observe: 'response' });
   }
 
   getEmployeeById(id: string) {
-    return this.http.get(this.url + 'employee/' + id, { headers: this.getHeaders(), observe: 'response' });
+    return this.http.get(this.url + 'employee/' + id, { observe: 'response' });
   }
 
   createEmployee(employee: Employee) {
-    return this.http.post(this.url + 'employee', employee, { headers: this.getHeaders(), observe: 'response' });
+    return this.http.post(this.url + 'employee', employee, { observe: 'response' });
   }
 
   updateEmployee(employee: Employee) {
-    return this.http.put(this.url + 'employee/' + employee.id, employee, { headers: this.getHeaders(), observe: 'response' });
+    return this.http.put(this.url + 'employee/' + employee.id, employee, { observe: 'response' });
   }
 
   deleteEmployee(id: string) {
-    return this.http.delete(this.url + 'employee/' + id, { headers: this.getHeaders(), observe: 'response' });
+    return this.http.delete(this.url + 'employee/' + id, { observe: 'response' });
   }
 
 }

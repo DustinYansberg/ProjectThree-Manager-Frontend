@@ -1,14 +1,17 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, inject } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { LayoutService } from "./service/app.layout.service";
-import { AuthService } from '../Services/auth.service';
 import { Router } from '@angular/router';
+import { DOCUMENT } from '@angular/common';
+import { AuthService } from '@auth0/auth0-angular';
 
 @Component({
     selector: 'app-topbar',
     templateUrl: './app.topbar.component.html'
 })
 export class AppTopBarComponent {
+    private auth = inject(AuthService);
+    private doc = inject(DOCUMENT);
 
     @ViewChild('menubutton') menuButton!: ElementRef;
 
@@ -18,9 +21,7 @@ export class AppTopBarComponent {
 
     @ViewChild('profileMenu') profileMenu!: any;
 
-    constructor(public layoutService: LayoutService, public authService: AuthService, public router: Router) { }
-
-
+    constructor(public layoutService: LayoutService, public router: Router) { }
 
     profileItems: MenuItem[];
 
@@ -74,9 +75,13 @@ export class AppTopBarComponent {
         this.colorScheme = colorScheme;
       }
     
-      signOut() {
-        this.authService.logout(); // Adjust this method according to your AuthService
-        this.router.navigate(['/auth/login']);
+      signOut(): void {
+        console.log(this.doc.location.origin);
+        this.auth.logout({
+          logoutParams: {
+            returnTo: this.doc.location.origin,
+          },
+        });
       }
 
       set theme(val: string) {
