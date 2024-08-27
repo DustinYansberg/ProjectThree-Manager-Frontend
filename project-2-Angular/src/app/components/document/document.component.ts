@@ -43,7 +43,7 @@ export class DocumentComponent implements OnInit {
 
     employee: Employee;
 
-    employees: any[];
+    employees: any[] = [];
     
   searchedDocument: string;
 
@@ -65,9 +65,12 @@ export class DocumentComponent implements OnInit {
             next: (response) => {
                 let body: any = response.body;
 
-                body.Resources.forEach((resource: any) => {
+                body.Resources.forEach((resource: Employee) => {
+                    console.log(this.employees);
                     this.employees.push({ label: resource.displayName.slice(0, 30).toString(), value: resource.id.toString() });
+                    
                 });
+                console.log(this.employees);
                this.loading = false;
             },
             error: (err) => {
@@ -150,15 +153,18 @@ export class DocumentComponent implements OnInit {
         this.creatingDocument = false;
     }
 
-    getDocumentsByIdentity(){
+    getDocumentsByIdentity(event : any){
         this.loading = true;
         this.documents = [];
-        this.documentService.getDocumentByIdentity(this.employee.id).subscribe(
+        
+        
+        this.documentService.getDocumentByIdentity(event.value).subscribe(
             {next: (response) => {
                 console.log(response)
                 let body : any = response.body;
                 this.documents = body;
                 this.loading = false;
+                console.log(this.documents);
             }, 
             error : (err) => {
                 console.log(err)

@@ -24,13 +24,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     identityId: string;
 
     constructor(private productService: ProductService, public layoutService: LayoutService, private userService: UserService) {
-        this.userService.getEmployeeId().subscribe(data => {
-        this.userService.idSubject.next(data.body.id);
-            this.userService.idObservable.subscribe(id => {
-                this.identityId = id;
-            });
-            console.log(this.identityId);
-        });
+        // this.userService.getEmployeeId().subscribe(data => {
+        // this.userService.idSubject.next(data.body.id);
+        //     this.userService.idObservable.subscribe(id => {
+        //         this.identityId = id;
+        //     });
+        //     console.log(this.identityId);
+        // });
         
         console.log("hello")
         this.subscription = this.layoutService.configUpdate$

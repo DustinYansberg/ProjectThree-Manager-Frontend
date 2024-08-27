@@ -45,18 +45,20 @@ export class EmployeesComponent implements OnInit {
 
     identityId: string;
 
-    constructor(private employeeService: EmployeeService, private messageService: MessageService, private userService: UserService) {
-        // Subscribe to this method to grab the current users sailpoint identity
-      
-      
+    constructor(private employeeService: EmployeeService, private messageService: MessageService, private userService: UserService) 
+    {
+        
     }
 
     ngOnInit() {
       this.loading = true;
-      this.userService.idObservable.subscribe(id => {
-        this.identityId = id
-        console.log(this.identityId);
-        this.employeeService.getByManager(this.identityId)
+
+      this.userService.getEmployeeId().subscribe(data => {
+        this.userService.idSubject.next(data.body.id);
+            this.userService.idObservable.subscribe(id => {
+                this.identityId = id;
+
+                this.employeeService.getByManager(this.identityId)
           .subscribe({
               next: (response) => {
               console.log(response);
@@ -84,7 +86,12 @@ export class EmployeesComponent implements OnInit {
                   this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
               }
           });
+            });
+            console.log(this.identityId);
         });
+
+        
+        
   }
 
     //loadEmployees($event: LazyLoadEvent) {
