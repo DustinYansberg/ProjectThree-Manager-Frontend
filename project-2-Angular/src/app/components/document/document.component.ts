@@ -7,6 +7,7 @@ import { Employee } from 'src/app/Models/employee';
 
 import { DocumentService } from 'src/app/Services/document.service';
 import { EmployeeService } from 'src/app/Services/employee.service';
+import { UserService } from '../../Services/user.service';
 
 @Component({
     templateUrl: './document.component.html',
@@ -44,14 +45,21 @@ export class DocumentComponent implements OnInit {
 
     employees: any[];
     
-    searchedDocument: string;
+  searchedDocument: string;
 
-    constructor(private documentService: DocumentService, private messageService: MessageService, private employeeService: EmployeeService) {}
+  identityId: string;
+
+  constructor(private documentService: DocumentService, private messageService: MessageService, private userService: UserService, private employeeService: EmployeeService) {
+    this.userService.idObservable.subscribe(id => {
+      this.identityId = id
+    });
+    console.log(this.identityId);
+  }
 
     ngOnInit() {
         this.loading = true;
         // add own id
-        this.employeeService.getByManager("")
+        this.employeeService.getByManager(this.identityId)
         .pipe(timeout(20000)) // 20 seconds timeout
         .subscribe({
             next: (response) => {
@@ -60,6 +68,7 @@ export class DocumentComponent implements OnInit {
                 body.Resources.forEach((resource: any) => {
                     this.employees.push({ label: resource.displayName.slice(0, 30).toString(), value: resource.id.toString() });
                 });
+               this.loading = false;
             },
             error: (err) => {
                 this.loading = false;
@@ -67,7 +76,7 @@ export class DocumentComponent implements OnInit {
             }
         });
 
-        this.getDocumentsByIdentity();
+        //this.getDocumentsByIdentity();
     }
 
     customSort(event: any) {

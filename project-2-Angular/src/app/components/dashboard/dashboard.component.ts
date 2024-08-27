@@ -40,15 +40,29 @@ export class DashboardComponent implements OnInit, OnDestroy {
         });
     }
 
-    ngOnInit() {
-        this.initChart();
-        this.productService.getProductsSmall().then(data => this.products = data);
+    //ngOnInit() {
+    //    this.initChart();
+    //    this.productService.getProductsSmall().then(data => this.products = data);
 
-        this.items = [
-            { label: 'Add New', icon: 'pi pi-fw pi-plus' },
-            { label: 'Remove', icon: 'pi pi-fw pi-minus' }
-        ];
-    }
+    //    this.items = [
+    //        { label: 'Add New', icon: 'pi pi-fw pi-plus' },
+    //        { label: 'Remove', icon: 'pi pi-fw pi-minus' }
+    //    ];
+  //}
+
+  ngOnInit() {
+    /* These stacked subscribe methods populate the
+       identityId by the current gmail for the rest of the user session */
+    this.userService.getEmployeeId().subscribe(data => {
+      this.userService.idSubject.next(data.body.id);
+      this.userService.idObservable.subscribe(id => {
+        this.identityId = id
+        // --------------------
+
+      });
+    });
+
+  }
 
     initChart() {
         const documentStyle = getComputedStyle(document.documentElement);
