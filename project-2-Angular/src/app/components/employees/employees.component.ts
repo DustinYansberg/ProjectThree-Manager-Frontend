@@ -9,6 +9,7 @@ import { Manager } from 'src/app/Models/manager';
 import { Name } from 'src/app/Models/name';
 
 import { EmployeeService } from 'src/app/Services/employee.service';
+import { UserService } from 'src/app/Services/user.service';
 
 @Component({
     templateUrl: './employees.component.html',
@@ -42,7 +43,15 @@ export class EmployeesComponent implements OnInit {
 
     passwordFieldType: string = 'password';
 
-    constructor(private employeeService: EmployeeService, private messageService: MessageService) {}
+    identityId: string;
+
+    constructor(private employeeService: EmployeeService, private messageService: MessageService, private userService: UserService) {
+        // Subscribe to this method to grab the current users sailpoint identity
+        this.userService.idObservable.subscribe(id => {
+            this.identityId = id;
+            console.log(this.identityId)
+        });
+    }
 
     ngOnInit() {
         this.loading = true;
