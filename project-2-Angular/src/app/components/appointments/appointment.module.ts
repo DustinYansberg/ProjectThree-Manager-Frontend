@@ -20,6 +20,7 @@ import { DialogModule } from 'primeng/dialog';
 import { DocumentService } from 'src/app/Services/document.service';
 import { EmployeeService } from '../../Services/employee.service';
 import { AppointmentService } from '../../Services/appointment.service';
+import { CalendarModule } from 'primeng/calendar';
 
 @NgModule({
 	imports: [
@@ -38,7 +39,8 @@ import { AppointmentService } from '../../Services/appointment.service';
         DropdownModule,
         RadioButtonModule,
         InputNumberModule,
-        DialogModule
+    DialogModule,
+    CalendarModule
 	],
 	providers: [
     AppointmentService,

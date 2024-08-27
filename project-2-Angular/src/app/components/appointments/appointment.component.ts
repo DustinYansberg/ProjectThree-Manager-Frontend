@@ -7,6 +7,7 @@ import { Employee } from 'src/app/Models/employee';
 
 import { AppointmentService } from 'src/app/Services/appointment.service';
 import { EmployeeService } from 'src/app/Services/employee.service';
+import { UserService } from '../../Services/user.service';
 
 @Component({
     templateUrl: './appointment.component.html',
@@ -21,8 +22,8 @@ export class AppointmentComponent implements OnInit {
     //complete doc PUT
 
     appointments: Appointment[] = [];
-    
-  defaultAppointment: Appointment = new Appointment(0, "", "", new Date(), "ac12000290eb1c4e8190eb5cb9f500ea", "", false);
+
+    defaultAppointment: Appointment = new Appointment(0, "", "", new Date(Date.now()), "", "", false);
 
     appointmentDialog: boolean = false;
 
@@ -40,14 +41,26 @@ export class AppointmentComponent implements OnInit {
 
     employee: Employee;
 
-    employees: any[];
-   
-    constructor(private appointmentService: AppointmentService, private messageService: MessageService, private employeeService: EmployeeService) {}
+    employees: any[] = [];
+;
+
+   identityId: string;
+
+  constructor(private appointmentService: AppointmentService, private messageService: MessageService, private userService: UserService, private employeeService: EmployeeService) {
+      this.userService.idObservable.subscribe(id => {
+        this.identityId = id
+      });
+      console.log(this.identityId);
+    }
 
     ngOnInit() {
       this.loading = true;
 
-      this.appointmentService.getAppointmentByOrganizerId("ac12000290eb1c4e8190eb5cb9f500ea")
+      while (this.identityId == null) {
+        
+      };
+
+      this.appointmentService.getAppointmentByOrganizerId(this.identityId)
         .subscribe({
           next: (response) => {
             let body: any = response.body;
@@ -66,6 +79,29 @@ export class AppointmentComponent implements OnInit {
             this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
           }
         });
+
+      this.employeeService.getByManager(this.identityId)
+        .pipe(timeout(20000)) // 20 seconds timeout
+        .subscribe({
+          next: (response) => {
+            let body: any = response.body;
+            console.log(response);
+
+            body.Resources.forEach((resource: Employee) => {
+              console.log(this.employees);
+              this.employees.push({ label: resource.displayName.slice(0, 30).toString(), value: resource.id.toString() });
+
+            });
+            console.log(this.employees);
+          },
+          error: (err) => {
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
+          }
+        });
+
+      
+
+      
 
         //this.employeeService.getAllEmployees(1, 1000)
         //.pipe(timeout(20000)) // 20 seconds timeout
@@ -148,13 +184,14 @@ export class AppointmentComponent implements OnInit {
         .subscribe({
           next: (response) => {
             this.appointments = this.appointments.filter(val => val.id !== this.appointment.id);
+            this.appointment = this.defaultAppointment;
             this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Appointment Deleted', life: 3000 });
           },
           error: (err) => {
             this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
           }
         });
-      this.appointment = this.defaultAppointment;
+      
     }
 
 
@@ -166,7 +203,8 @@ export class AppointmentComponent implements OnInit {
     }
 
     createAppointment() {
-        this.submitted = true;
+      this.submitted = true;
+      this.appointment.organizerId = this.identityId;
            {
             //identity.id 
             //name
@@ -176,7 +214,9 @@ export class AppointmentComponent implements OnInit {
                     .subscribe({
                         next: (response) => {
                             console.log(response);
-                            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Appointment Created', life: 3000 });
+                        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Appointment Created', life: 3000 });
+                        this.appointment = response.body as Appointment;
+                            this.appointment.formattedDate = new Date(this.appointment.datetime).toLocaleString();
                             this.appointments.push(this.appointment);
                         },
                         error: (err) => {
