@@ -8,8 +8,8 @@ export class RequestService {
 
   constructor(private http: HttpClient) { }
 
-  // url: String = 'http://4.156.40.62:9001/entitlements/';
-  url: String = 'http://localhost:8081/entitlements/';
+  url: String = 'http://4.156.40.62:9001/entitlements/';
+  // url: String = 'http://localhost:8081/entitlements/';
 
 
 
