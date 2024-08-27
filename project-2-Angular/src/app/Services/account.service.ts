@@ -9,7 +9,8 @@ export class AccountService {
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
-  url: String = 'http://localhost:8082/';
+  //url: String = 'http://localhost:8082/';
+  url: String = 'http://';
 
   private getHeaders() {
     return this.authService.getHeaders();

@@ -1,0 +1,91 @@
+<div class="grid">
+  <div class="col-12">
+    <div class="card px-6 py-6">
+      <p-toast></p-toast>
+      <p-toolbar styleClass="mb-4">
+        <ng-template pTemplate="left">
+          <div class="my-2">
+            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="right">
+          <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help" (click)="dt.exportCSV()"></button>
+        </ng-template>
+      </p-toolbar>
+
+      <p-table #dt [loading]="loading" [value]="appointments" [customSort]="true" (sortFunction)="customSort($event)" [columns]="cols" responsiveLayout="scroll" [rows]="10" [globalFilterFields]="['title']" [paginator]="true" [rowsPerPageOptions]="[10,20,30,50,100]" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [rowHover]="true" dataKey="id">
+        <ng-template pTemplate="caption">
+          <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+            <h5 class="m-0">Manage Appointments</h5>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="title"> Title <p-sortIcon field='title'></p-sortIcon></th>
+            <th pSortableColumn="attendeeId"> Attendee <p-sortIcon field="attendeeId"></p-sortIcon></th>
+            <th pSortableColumn="datetime"> Date & Time <p-sortIcon field="datetime"></p-sortIcon></th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-appointment>
+          <tr>
+            <td style="width:33%; min-width:8rem; max-width: 33%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              {{ appointment.title }}
+            </td>
+            <td style="width:33%; min-width:8rem; max-width: 33%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              {{ appointment.attendeeId }}
+            </td>
+            <td style="width:33%; min-width:8rem; max-width: 33%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              {{ appointment.formattedDate }}
+            </td>
+            <td>
+              <div class="flex">
+                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteAppointment(appointment)"></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <p-dialog [(visible)]="appointmentDialog" [style]="{width: '450px'}" header="Create Appointment" [modal]="true" class="p-fluid">
+      <ng-template pTemplate="content">
+        <div class="field">
+          <label for="attendeeId">Attendee</label>
+          <p-dropdown [options]="users" [(ngModel)]="appointment.attendeeId" name="identity" placeholder="Select Identity" [filter]="true" optionLabel="label" optionValue="value" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !document.identityId}"></p-dropdown>
+          <small class="ng-dirty ng-invalid" *ngIf="submitted && !document.identityId">Identity is required.</small>
+        </div>
+        <div class="field">
+          <label for="title">Title</label>
+          <input type="text" pInputText id="title" [(ngModel)]="appointment.title" />
+        </div>
+        <div class="field">
+          <label for="title">Description</label>
+          <input type="text" pInputText id="description" [(ngModel)]="appointment.description" />
+        </div>
+        <div class="field">
+          <label for="datetime">Date & Time</label>
+          <input type="datetime-local" pInputText id="datetime" [(ngModel)]="appointment.datetime" />
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Create" icon="pi pi-check" class="p-button-text" (click)="createAppointment()"></button>
+      </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="deleteAppointmentDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+      <div class="flex align-items-center justify-content-center">
+        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+        <span *ngIf="appointment">Are you sure you want to delete <b>{{appointment.title}}</b>?</span>
+      </div>
+      <ng-template pTemplate="footer">
+        <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteAppointmentDialog = false"></button>
+        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="confirmDelete()"></button>
+      </ng-template>
+    </p-dialog>
+
+  </div>
+</div>
