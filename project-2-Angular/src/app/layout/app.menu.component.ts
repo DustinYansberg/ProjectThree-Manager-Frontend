@@ -25,6 +25,7 @@ export class AppMenuComponent implements OnInit {
                     // some frontend plugin or bonus feature
                   { label: 'Documents', icon: 'pi pi-fw pi-file-edit', routerLink: ['/documents'] },
                   { label: 'Appointments', icon: 'pi pi-fw pi-calendar', routerLink: ['/appointments'] }
+
                 ]
             }
         ];
