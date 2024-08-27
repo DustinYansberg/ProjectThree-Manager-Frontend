@@ -7,10 +7,10 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
   providedIn: 'root',
 })
 export class UserService {
-  public userEmail: string | null = null;
+  private userEmail: string;
   user$: any;
 
-  idSubject: BehaviorSubject<string> = new BehaviorSubject<string>("NULL");
+  idSubject: BehaviorSubject<string> = new BehaviorSubject<string>("");
 
   // Holds the getEmployeeId return value
   idObservable = this.idSubject.asObservable();
@@ -18,7 +18,8 @@ export class UserService {
   constructor(private auth: AuthService, private http: HttpClient) {
     this.user$ = this.auth.user$;
     this.user$.subscribe((user) => {
-      this.userEmail = user?.email || null;
+      console.log(user?.email);
+      this.userEmail = user?.email;
     });
   }
 
@@ -26,11 +27,12 @@ export class UserService {
     return this.user$;
   }
 
-  getUserEmail(): string | null {
+  getUserEmail(): string {
     return this.userEmail;
   }
 
   getEmployeeId() {
+    console.log(this.userEmail);
     const apiUrl = `http://4.156.40.62:9001/employee/email/${this.userEmail}`;
     return this.http.get<any>(apiUrl, { observe: 'response' });
   }

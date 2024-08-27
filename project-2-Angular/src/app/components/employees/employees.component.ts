@@ -45,77 +45,86 @@ export class EmployeesComponent implements OnInit {
 
     identityId: string;
 
-    constructor(private employeeService: EmployeeService, private messageService: MessageService, private userService: UserService) {
-        // Subscribe to this method to grab the current users sailpoint identity
-        this.userService.idObservable.subscribe(id => {
-            this.identityId = id;
-            console.log(this.identityId)
-        });
+    constructor(private employeeService: EmployeeService, private messageService: MessageService, private userService: UserService) 
+    {
+        
     }
 
     ngOnInit() {
-        this.loading = true;
-        this.employeeService.getAllEmployees(1, 10)
-        .subscribe({
-            next: (response) => {
-            console.log(response);
-                this.totalRecords = response.body["totalResults"];
-                let body: any = response.body["Resources"];
+      this.loading = true;
 
-                body.forEach((resource: Employee) => {
-                    if (!resource.emails || !resource.emails[0] || !resource.emails[0].value) {
-                        resource.emails = [new Email("", " ", true)];
-                    }
-                });
-                this.employees = body;
+      this.userService.getEmployeeId().subscribe(data => {
+        this.userService.idSubject.next(data.body.id);
+            this.userService.idObservable.subscribe(id => {
+                this.identityId = id;
 
-                this.cols = [
-                    { field: 'userName', header: 'Username' },
-                    { field: 'displayName', header: 'Display Name' },
-                    { field: 'emails', header: 'Email' },
-                ];
+                this.employeeService.getByManager(this.identityId)
+          .subscribe({
+              next: (response) => {
+              console.log(response);
+                  this.totalRecords = response.body["totalResults"];
+                  let body: any = response.body["Resources"];
 
-                this.loading = false;
-            },
-            error: (err) => {
-                console.log(err);
-                this.loading = false;
-                this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
-            }
+                  body.forEach((resource: Employee) => {
+                      if (!resource.emails || !resource.emails[0] || !resource.emails[0].value) {
+                          resource.emails = [new Email("", " ", true)];
+                      }
+                  });
+                  this.employees = body;
+
+                  this.cols = [
+                      { field: 'userName', header: 'Username' },
+                      { field: 'displayName', header: 'Display Name' },
+                      { field: 'emails', header: 'Email' },
+                  ];
+
+                  this.loading = false;
+              },
+              error: (err) => {
+                  console.log(err);
+                  this.loading = false;
+                  this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
+              }
+          });
+            });
+            console.log(this.identityId);
         });
+
+        
+        
   }
 
-    loadEmployees($event: LazyLoadEvent) {
-      this.loading = true;
-      this.employeeService.getAllEmployees($event.first || 0, $event.rows)
-        .subscribe({
-          next: (response) => {
-            console.log(response);
-            this.totalRecords = response.body["totalResults"];
-            let body: any = response.body["Resources"];
+    //loadEmployees($event: LazyLoadEvent) {
+    //  this.loading = true;
+    //  this.employeeService.getAllEmployees($event.first || 0, $event.rows)
+    //    .subscribe({
+    //      next: (response) => {
+    //        console.log(response);
+    //        this.totalRecords = response.body["totalResults"];
+    //        let body: any = response.body["Resources"];
 
-            body.forEach((resource: Employee) => {
-              if (!resource.emails || !resource.emails[0] || !resource.emails[0].value) {
-                resource.emails = [new Email("", " ", true)];
-              }
-            });
-            this.employees = body;
+    //        body.forEach((resource: Employee) => {
+    //          if (!resource.emails || !resource.emails[0] || !resource.emails[0].value) {
+    //            resource.emails = [new Email("", " ", true)];
+    //          }
+    //        });
+    //        this.employees = body;
 
-            this.cols = [
-              { field: 'userName', header: 'Username' },
-              { field: 'displayName', header: 'Display Name' },
-              { field: 'emails', header: 'Email' },
-            ];
+    //        this.cols = [
+    //          { field: 'userName', header: 'Username' },
+    //          { field: 'displayName', header: 'Display Name' },
+    //          { field: 'emails', header: 'Email' },
+    //        ];
 
-            this.loading = false;
-          },
-          error: (err) => {
-            console.log(err);
-            this.loading = false;
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
-          }
-        });
-    }
+    //        this.loading = false;
+    //      },
+    //      error: (err) => {
+    //        console.log(err);
+    //        this.loading = false;
+    //        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
+    //      }
+    //    });
+    //}
 
     customSort(event: any) {
         event.data.sort((data1: any, data2: any) => {
@@ -279,41 +288,41 @@ export class EmployeesComponent implements OnInit {
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
     }
 
-  paginate(event) {
-    this.loading = true;
-    this.employees = null;
-    this.employeeService.getAllEmployees(event.first, event.rows)
-      .subscribe({
-        next: (response) => {
-          console.log(response);
-          let body: any = response.body;
+  //paginate(event) {
+  //  this.loading = true;
+  //  this.employees = null;
+  //  this.employeeService.getAllEmployees(event.first, event.rows)
+  //    .subscribe({
+  //      next: (response) => {
+  //        console.log(response);
+  //        let body: any = response.body;
 
-          body.forEach((resource: Employee) => {
-            if (!resource.emails || !resource.emails[0] || !resource.emails[0].value) {
-              resource.emails = [new Email("", " ", true)];
-            }
-          });
-          this.employees = body;
+  //        body.forEach((resource: Employee) => {
+  //          if (!resource.emails || !resource.emails[0] || !resource.emails[0].value) {
+  //            resource.emails = [new Email("", " ", true)];
+  //          }
+  //        });
+  //        this.employees = body;
 
-          this.cols = [
-            { field: 'userName', header: 'Username' },
-            { field: 'displayName', header: 'Display Name' },
-            { field: 'emails', header: 'Email' },
-          ];
+  //        this.cols = [
+  //          { field: 'userName', header: 'Username' },
+  //          { field: 'displayName', header: 'Display Name' },
+  //          { field: 'emails', header: 'Email' },
+  //        ];
 
-          this.loading = false;
-        },
-        error: (err) => {
-          console.log(err);
-          this.loading = false;
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
-        }
-      });
+  //        this.loading = false;
+  //      },
+  //      error: (err) => {
+  //        console.log(err);
+  //        this.loading = false;
+  //        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
+  //      }
+  //    });
 
-      //event.first = Index of the first record
-      //event.rows = Number of rows to display in new page
-      //event.page = Index of the new page
-      //event.pageCount = Total number of pages
-    }
+  //    //event.first = Index of the first record
+  //    //event.rows = Number of rows to display in new page
+  //    //event.page = Index of the new page
+  //    //event.pageCount = Total number of pages
+  //  }
     
 }

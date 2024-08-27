@@ -7,6 +7,7 @@ import { Employee } from 'src/app/Models/employee';
 
 import { DocumentService } from 'src/app/Services/document.service';
 import { EmployeeService } from 'src/app/Services/employee.service';
+import { UserService } from '../../Services/user.service';
 
 @Component({
     templateUrl: './document.component.html',
@@ -42,24 +43,35 @@ export class DocumentComponent implements OnInit {
 
     employee: Employee;
 
-    employees: any[];
+    employees: any[] = [];
     
-    searchedDocument: string;
+  searchedDocument: string;
 
-    constructor(private documentService: DocumentService, private messageService: MessageService, private employeeService: EmployeeService) {}
+  identityId: string;
+
+  constructor(private documentService: DocumentService, private messageService: MessageService, private userService: UserService, private employeeService: EmployeeService) {
+    this.userService.idObservable.subscribe(id => {
+      this.identityId = id
+    });
+    console.log(this.identityId);
+  }
 
     ngOnInit() {
         this.loading = true;
         // add own id
-        this.employeeService.getByManager("")
+        this.employeeService.getByManager(this.identityId)
         .pipe(timeout(20000)) // 20 seconds timeout
         .subscribe({
             next: (response) => {
                 let body: any = response.body;
 
-                body.Resources.forEach((resource: any) => {
+                body.Resources.forEach((resource: Employee) => {
+                    console.log(this.employees);
                     this.employees.push({ label: resource.displayName.slice(0, 30).toString(), value: resource.id.toString() });
+                    
                 });
+                console.log(this.employees);
+               this.loading = false;
             },
             error: (err) => {
                 this.loading = false;
@@ -67,7 +79,7 @@ export class DocumentComponent implements OnInit {
             }
         });
 
-        this.getDocumentsByIdentity();
+        //this.getDocumentsByIdentity();
     }
 
     customSort(event: any) {
@@ -141,15 +153,18 @@ export class DocumentComponent implements OnInit {
         this.creatingDocument = false;
     }
 
-    getDocumentsByIdentity(){
+    getDocumentsByIdentity(event : any){
         this.loading = true;
         this.documents = [];
-        this.documentService.getDocumentByIdentity(this.employee.id).subscribe(
+        
+        
+        this.documentService.getDocumentByIdentity(event.value).subscribe(
             {next: (response) => {
                 console.log(response)
                 let body : any = response.body;
                 this.documents = body;
                 this.loading = false;
+                console.log(this.documents);
             }, 
             error : (err) => {
                 console.log(err)
