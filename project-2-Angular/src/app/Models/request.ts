@@ -3,16 +3,30 @@ import { Role } from "./role";
 
 export class Request {
 
-  id: string;
-  employee: Employee;
-  role: Role;
-  note: string;
+  requestId: string;
+  ownerId: string;
+  requesterId: string;
+  entitlementId: string;
+  processed: boolean;
+  approved: boolean;
+  description: string;
 
-  constructor(id: string, employee: Employee, role: Role, note: string) {
-        this.id = id;
-        this.employee = employee;
-        this.role = role;
-        this.note = note;
-    }
+  constructor(
+    requestId: string = '',
+    ownerId: string = '',
+    requesterId: string = '',
+    entitlementId: string = '',
+    processed: boolean = false,
+    approved: boolean = false,
+    description: string = ''
+  ) {
+    this.requestId = requestId;
+    this.ownerId = ownerId;
+    this.requesterId = requesterId;
+    this.entitlementId = entitlementId;
+    this.processed = processed;
+    this.approved = approved;
+    this.description = description;
+  }
 
 }

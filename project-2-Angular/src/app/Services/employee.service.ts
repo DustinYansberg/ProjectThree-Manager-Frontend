@@ -9,6 +9,7 @@ export class EmployeeService {
   constructor(private http: HttpClient, private authService: AuthService) { }
 
   url: String = 'http://4.156.40.62:9001/';
+  // url: String = 'http://localhost:8081/';
 
   private getHeaders() {
     return this.authService.getHeaders();

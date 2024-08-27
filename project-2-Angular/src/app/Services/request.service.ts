@@ -9,26 +9,33 @@ export class RequestService {
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
-  url: String = 'http://4.156.40.62:9001/';
+  // url: String = 'http://4.156.40.62:9001/entitlements/';
+  url: String = 'http://localhost:8081/entitlements/';
 
   private getHeaders() {
     return this.authService.getHeaders();
   }
 
-  getAllRequests() {
-    return this.http.get(this.url + 'request', { observe: 'response' });
+  getByApp(app: string) {
+    return this.http.get(this.url + 'getByApp/' + app, { observe: 'response' });
   }
 
-  getRequestById(id: string) {
-    return this.http.get(this.url + 'request/' + id, { headers: this.getHeaders(), observe: 'response' });
+  getByManager(managerId : string) {
+    return this.http.get(this.url + 'getByOwner/' + managerId, { observe: 'response' });
   }
 
-  createRequest(request: Request) {
-    return this.http.post(this.url + 'request', request, { headers: this.getHeaders(), observe: 'response' });
+  getByManagerAndStatus(managerId: string, processed : boolean) {
+    return this.http.get(this.url + 'getByManagerAndStatus/' + 
+      managerId +"/"+ processed, { headers: this.getHeaders(), observe: 'response' });
+  }
+
+  createRequest(manId:string, entId:string, userId:string, description:string) {
+    return this.http.post(this.url + 'request/'+ manId +"/"+ entId +"/"+
+       userId +"/"+ description, { headers: this.getHeaders(), observe: 'response' });
   }
 
   updateRequest(request: Request) {
-    return this.http.put(this.url + 'request/' + request.id, request, { headers: this.getHeaders(), observe: 'response' });
+    return this.http.put(this.url + 'request/' + request, { headers: this.getHeaders(), observe: 'response' });
   }
 
   denyRequest(id: string) {
