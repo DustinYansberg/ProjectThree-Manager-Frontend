@@ -1,13 +1,39 @@
 <div class="layout-wrapper" [ngClass]="containerClass">
-    <app-topbar></app-topbar>
-    <div class="layout-sidebar">
+    <!-- Only acces the below if authorized and signed in, else show the login button -->
+  
+    <ng-container *ngIf="isAuthenticated$ | async; else unAuthenticated">
+      <app-topbar></app-topbar>
+      <div class="layout-sidebar">
         <app-sidebar></app-sidebar>
-    </div>
-    <div class="layout-main-container">
+      </div>
+      <div class="layout-main-container">
         <div class="layout-main">
-            <router-outlet></router-outlet>
+          <router-outlet></router-outlet>
         </div>
         <app-footer></app-footer>
-    </div>
-    <div class="layout-mask"></div>
-</div>
+      </div>
+      <div class="layout-mask"></div>
+    </ng-container>
+  
+    <ng-template #unAuthenticated>
+        <div class="flex flex-column align-items-center justify-content-center py-8">
+            <div style="border-radius:56px; padding:0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%);">
+                <div class="w-full surface-card py-8 px-5 sm:px-8" style="border-radius:53px">
+                    <div class="text-center mb-5">
+                        <div class="text-900 text-3xl font-medium mb-3">Welcome!</div>
+                        <span class="text-600 font-medium">Sailor Health Services Management Portal</span>
+                    </div>
+        
+                    <div>
+                        <button pButton pRipple label="Sign In" class="w-full p-3 text-xl" (click)="handleLogin()"></button>
+                    </div>
+                </div>
+            </div>
+        
+            <div *ngIf="loading" class="overlay">
+                <p-progressSpinner></p-progressSpinner>
+            </div>
+        </div>
+    </ng-template>
+  </div>
+  
