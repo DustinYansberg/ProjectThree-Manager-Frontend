@@ -10,6 +10,11 @@ export class EmployeeService {
   //url: String = 'http://4.156.40.62:9001/';
   url: String = 'http://localhost:8081/';
 
+  
+  
+  getByManager(id: string){
+    return this.http.get(this.url + "employee/manager" + "/" + id, { observe: 'response'});
+  }
 
   getAllEmployees(index: number, row: number) {
     return this.http.get(this.url + 'employee/page/' + index + "/" + row, { observe: 'response' });
