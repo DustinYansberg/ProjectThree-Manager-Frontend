@@ -143,7 +143,7 @@ export class DocumentComponent implements OnInit {
     getDocumentsByIdentity(){
         this.loading = true;
         this.documents = [];
-        this.documentService.getDocumentByIdentity("ac16000290f113888191156767f74341").subscribe(
+        this.documentService.getDocumentByIdentity(this.employee.id).subscribe(
             {next: (response) => {
                 console.log(response)
                 let body : any = response.body;

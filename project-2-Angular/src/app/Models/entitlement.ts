@@ -1,13 +1,15 @@
 export class Entitlement {
 
-    name: string;
     id: string;
-    active: boolean;
+    name: string;
+    application: string;
+    
 
-    constructor(name: string, id: string, active: boolean) {
-        this.name = name;
+
+    constructor(id: string, name: string, application: string) {
         this.id = id;
-        this.active = active;
+        this.name = name;
+        this.application = application;
     }
 
 }
