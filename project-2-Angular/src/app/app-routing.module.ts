@@ -18,7 +18,7 @@ import { AppLayoutComponent } from "./layout/app.layout.component";
                     { path: 'accountdetail/:id', loadChildren: () => import('./components/account-detail/account-detail.module').then(m => m.AccountDetailModule) },
                     { path: 'requests', loadChildren: () => import('./components/requests/requests.module').then(m => m.RequestsModule) },
                     { path: 'documents', loadChildren: () => import('./components/document/document.module').then(m => m.DocumentModule) },
-                    { path: 'appointments', canActivate: [AuthGuard], loadChildren: () => import('./components/appointments/appointment.module').then(m => m.AppointmentModule) },
+                    { path: 'appointments', loadChildren: () => import('./components/appointments/appointment.module').then(m => m.AppointmentModule) },
 
 
                     { path: 'uikit', loadChildren: () => import('./demo/components/uikit/uikit.module').then(m => m.UIkitModule) },
