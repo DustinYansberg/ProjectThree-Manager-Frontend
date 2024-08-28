@@ -126,7 +126,7 @@ export class AppLayoutComponent implements OnDestroy {
     handleLogin(): void {
         this.auth.loginWithRedirect({
           appState: {
-            target: '/',
+            target: '/employees',
           },
         });
       }

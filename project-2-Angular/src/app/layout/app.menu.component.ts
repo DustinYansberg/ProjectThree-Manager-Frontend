@@ -17,7 +17,7 @@ export class AppMenuComponent implements OnInit {
             {
                 label: 'Home',
                 items: [
-                    { label: 'Home', icon: 'pi pi-fw pi-home', routerLink: ['/'] },
+                    // { label: 'Home', icon: 'pi pi-fw pi-home', routerLink: ['/'] },
                     { label: 'Employees', icon: 'pi pi-fw pi-users', routerLink: ['/employees'] },
                     { label: 'Accounts', icon: 'pi pi-fw pi-sitemap', routerLink: ['/accounts'] },
                     // view approve or deny requests from your employees
@@ -25,7 +25,7 @@ export class AppMenuComponent implements OnInit {
                     // some frontend plugin or bonus feature
                   { label: 'Documents', icon: 'pi pi-fw pi-file-edit', routerLink: ['/documents'] },
                   { label: 'Appointments', icon: 'pi pi-fw pi-calendar', routerLink: ['/appointments'] },
-                  { label: 'Profile', icon: 'pi pi-fw pi-calendar', routerLink: ['/profile'] }
+                //   { label: 'Profile', icon: 'pi pi-fw pi-calendar', routerLink: ['/profile'] }
                 ]
             }
         ];
