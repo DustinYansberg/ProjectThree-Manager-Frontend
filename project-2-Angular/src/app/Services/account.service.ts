@@ -6,7 +6,7 @@ export class AccountService {
 
   constructor(private http: HttpClient) { }
 
-  // url: String = 'http://localhost:8082/';
+   //url: String = 'http://localhost:8082/';
   url: String = 'http://4.156.40.62:9001/'
 
   getAllAccounts() {
@@ -14,7 +14,7 @@ export class AccountService {
   }
 
   getAccountById(id: string) {
-    return this.http.get(this.url + 'account/' + id, { observe: 'response' });
+    return this.http.get(this.url + 'account/identity/' + id, { observe: 'response' });
   }
 
   createAccount(accountDetails: any) {

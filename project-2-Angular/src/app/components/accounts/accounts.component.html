@@ -19,10 +19,18 @@
                 <ng-template pTemplate="caption">
                     <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
                         <h5 class="m-0">Manage Accounts</h5>
-                        <span class="block mt-2 md:mt-0 p-input-icon-left">
-                            <i class="pi pi-search"></i>
-                            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."  class="w-full sm:w-auto"/>
-                        </span>
+                        <div class="field">
+                          <p-dropdown [options]="employees"
+                                      [(ngModel)]="employee"
+                                      name="identity"
+                                      placeholder="Select Identity"
+                                      [filter]="true"
+                                      optionLabel="label"
+                                      optionValue="value"
+                                      required
+                                      autofocus
+                                      (onChange)="getAccountsByIdentity($event)"></p-dropdown>
+                        </div>
                     </div>
                 </ng-template>
                 <ng-template pTemplate="header">
@@ -71,53 +79,38 @@
             <ng-template pTemplate="content">
                 <div class="field">
                     <label for="identity">Identity</label>
-                    <p-dropdown [options]="users" [(ngModel)]="account.identity.value" name="identity" placeholder="Select Identity" [filter]="true" optionLabel="label" optionValue="value" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !account.identity.value}"></p-dropdown> 
-                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !account.identity.value">Identity is required.</small>
+                    <p-dropdown [options]="employees" [(ngModel)]="account.userId" name="identity" placeholder="Select Identity" [filter]="true" optionLabel="label" optionValue="value" required autofocus></p-dropdown> 
                 </div>
                 <div class="field">
                     <label for="application">Application</label>
-                    <p-dropdown [options]="applications" [(ngModel)]="account.application.value" name="application" placeholder="Select Application" [filter]="true" optionLabel="label" optionValue="value" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !account.application.value}"></p-dropdown>
+                    <p-dropdown [options]="applications" [(ngModel)]="account.applicationDisplayName" name="application" placeholder="Select Application" [filter]="true" optionLabel="label" optionValue="value" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !account.application.value}"></p-dropdown>
                     <small class="ng-dirty ng-invalid" *ngIf="submitted && !account.application.value">Application is required.</small>
                 </div>
                 <div class="field">
                     <label for="username">Username (Email)</label>
                     <input 
                         type="email" pInputText id="username" name="username" 
-                        [(ngModel)]="account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].Username" 
+                        [(ngModel)]="account.username" 
                         required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && accountForm.controls.username?.invalid}"
                     />
-                    <small class="ng-dirty ng-invalid" *ngIf="submitted && accountForm.controls.username?.errors?.required">Username is required.</small>
-                    <small class="ng-dirty ng-invalid" *ngIf="submitted && accountForm.controls.username?.errors?.email">Username must be a valid email address.</small>
-                </div>
-                <div class="field">
-                    <label for="firstName">First Name</label>
-                    <input type="text" pInputText id="firstName" name="firstName" [(ngModel)]="account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].FirstName" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].FirstName}"/>
-                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].FirstName">First Name is required.</small>
-                </div> 
-                <div class="field">
-                    <label for="lastName">Last Name</label>
-                    <input type="text" pInputText id="lastName" name="lastName" [(ngModel)]="account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].LastName" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].LastName}"/>
-                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].LastName">Last Name is required.</small>
                 </div>
                 <div class="field">
                     <label for="nickname">Community Nickname</label>
-                    <input type="text" pInputText id="nickname" name="nickname" [(ngModel)]="account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].CommunityNickname" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].CommunityNickname}"/>
+                    <input type="text" pInputText id="nickname" name="nickname" [(ngModel)]="account.communityNickname" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].CommunityNickname}"/>
                     <small class="ng-dirty ng-invalid" *ngIf="submitted && !account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].CommunityNickname">Community Nickname is required.</small>
                 </div>
                 <div class="field">
                     <label for="alias">Alias</label>
-                    <input type="text" maxlength="8" pInputText id="alias" name="alias" [(ngModel)]="account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].Alias" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].Alias}"/>
+                    <input type="text" maxlength="8" pInputText id="accountAlias" name="alias" [(ngModel)]="account.accountAlias" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].Alias}"/>
                     <small class="ng-dirty ng-invalid" *ngIf="submitted && !account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].Alias">Alias is required.</small>
                 </div>
                 <div class="field">
                     <label for="email">Email</label>
                     <input 
                         type="email" pInputText id="email" name="email" 
-                        [(ngModel)]="account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].Email" 
+                        [(ngModel)]="account.email" 
                         required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && accountForm.controls.email?.invalid}"
                     />
-                    <small class="ng-dirty ng-invalid" *ngIf="submitted && accountForm.controls.email?.errors?.required">Email is required.</small>
-                    <small class="ng-dirty ng-invalid" *ngIf="submitted && accountForm.controls.email?.errors?.email">Email must be a valid email address.</small>
                 </div>
                 <div class="p-dialog-footer">
                     <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
