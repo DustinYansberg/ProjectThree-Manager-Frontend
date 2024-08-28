@@ -31,8 +31,8 @@ export class RequestService {
        userId +"/"+ description, { observe: 'response' });
   }
 
-  processRequest(userId: string, entitlementId: string, choice: boolean) {
-    return this.http.put(this.url + 'process/' + userId +"/"+ entitlementId +"/"+ choice, {  observe: 'response' });
+  processRequest(userId: string, entitlementId: string, choice: boolean, requestId: string) {
+    return this.http.put(this.url + 'processRequest/' + userId +"/"+ entitlementId +"/"+ choice +"/"+ requestId, {  observe: 'response' });
   }
 
 

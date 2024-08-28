@@ -11,250 +11,222 @@ import { Name } from 'src/app/Models/name';
 import { RequestService } from 'src/app/Services/request.service';
 import { Request } from '../../Models/request';
 import { Role } from '../../Models/role';
+import { UserService } from 'src/app/Services/user.service';
+import { EmployeeService } from 'src/app/Services/employee.service';
+import { Entitlement } from 'src/app/Models/entitlement';
 
 @Component({
-		templateUrl: './requests.component.html',
-		providers: [MessageService]
+  templateUrl: './requests.component.html',
+  providers: [MessageService],
 })
 export class RequestsComponent implements OnInit {
+  requests: Request[] = [];
 
-		requests: Request[] = [];
+  processedRequests: Request[] = [];
 
-		possibleRequests: Request[] = [];
+  entitlements: Entitlement[] = [];
 
-  		defaultRequest: Request = new Request("","","","",false, false,"");
+  entitlement: Entitlement = new Entitlement('','','','');
 
-		selectedRequest: Request[] = [];
+  possibleRequests: Request[] = [];
 
-		requestDialog: boolean = false;
+  defaultRequest: Request = new Request('', '', '', '', false, false, '');
 
-		denyRequestDialog: boolean = false;
+  selectedRequest: Request[] = [];
 
-		denyRequestsDialog: boolean = false;
-		
-		approveRequestDialog: boolean = false;
+  requestDialog: boolean = false;
 
-		approveRequestsDialog: boolean = false;
-		
-		submitted: boolean = false;
+  denyRequestDialog: boolean = false;
 
-		request: Request = this.defaultRequest;
+  denyRequestsDialog: boolean = false;
 
-		cols: any[];
+  approveRequestDialog: boolean = false;
 
-		loading: boolean = false;
+  approveRequestsDialog: boolean = false;
 
-		//add user service to get the logged user
-		constructor(private requestService: RequestService, private messageService: MessageService) { }
-		
+  submitted: boolean = false;
 
-		ngOnInit() {
-				this.loading = true;
-				
-				this.requests
-				this.possibleRequests
+  request: Request = this.defaultRequest;
+
+  cols: any[];
+
+  loading: boolean = false;
+
+  // accounts: string[] = [
+	// "Zendesk",
+	// "Salesforce",
+	// "Appian",
+	// "SailPoint",
+	// "ServiceNow",
+	// "Custom",
+  // ] ;
+
+  employee: Employee;
+
+  //get from gianni
+  employeeApps: string[] = [
+	"Zendesk",
+	"Appian",
+  "Salesforce"
+  ];
+  pagingEntitlements: any[] = [];
+
+  identityId: string;
+
+  manId: string;
+
+  choice: boolean = false;
 
 
-				this.requestService.getByApp("")
-				.subscribe({
-						next: (response) => {
-								console.log(response);
-								let body: any = response.body;
 
-								body.forEach((resource: Request) => {
-										// Put additional logic here if needed
-								});
-								this.requests = body;
+  //add user service to get the logged user
+  constructor(
+    private requestService: RequestService,
+    private messageService: MessageService,
+    private userService: UserService,
+  ) {
+	this.userService.idObservable.subscribe(id => {
+	this.identityId = id});
+	console.log(this.identityId)
+  }
 
-								this.cols = [
-										{ field: 'username', header: 'Username' },
-										{ field: 'role', header: 'Role' },
-										{ field: 'note', header: 'Note' }
-								];
+  ngOnInit() {
+    this.loading = true;
+    this.requests;
+    this.possibleRequests;
+    this.entitlements;
 
-								this.loading = false;
-						},
-						error: (err) => {
-								console.log(err);
-								this.loading = false;
-								this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
-						}
-			});
-		}
-
-		customSort(event: any) {
-				event.data.sort((data1: any, data2: any) => {
-						let value1 = this.resolveFieldData(data1, event.field);
-						let value2 = this.resolveFieldData(data2, event.field);
-						let result = null;
-
-						// Check if value1 and value2 are objects and pull out their 'value' property
-						if (typeof value1 === 'object' && value1 !== null) {
-								value1 = value1[0].value;
-						}
-						if (typeof value2 === 'object' && value2 !== null) {
-								value2 = value2[0].value;
-						}
-		
-						if (value1 == null && value2 != null)
-								result = -1;
-						else if (value1 != null && value2 == null)
-								result = 1;
-						else if (value1 == null && value2 == null)
-								result = 0;
-						else if (typeof value1 === 'string' && typeof value2 === 'string')
-								result = value1.localeCompare(value2);
-						else
-								result = (value1 < value2) ? -1 : (value1 > value2) ? 1 : 0;
-		
-						return (event.order * result);
-				});
-		}
-
-		resolveFieldData(data: any, field: string): any {
-				if (data && field) {
-						let fields = field.split('.');
-						let value = data;
-						for (let i = 0; i < fields.length; i++) {
-								if (value == null) {
-										return null;
-								}
-								value = value[fields[i]];
-						}
-						return value;
-				} else {
-						return null;
+	
+		  this.requestService.getByManagerAndStatus(this.identityId, false).subscribe({
+			next: (response) => {
+			  let body: any = response.body;
+			  body.forEach((element: any) => { 
+				if (element) {
+				  this.requests.push(element);
+          
 				}
-		}
-
-		denySelectedEmployees() {
-				this.denyRequestsDialog = true;
-    }
-
-    approveSelectedEmployees() {
-      this.approveRequestsDialog = true;
-    }
-
-		editRequest(request: Request) {
-				this.request = { ...request };
-				this.requestDialog = true;
-		}
-
-    denyRequest(request: Request) {
-          this.denyRequestDialog = true;
-				  this.request = { ...request };
-     }
-
-    approveRequest(request: Request) {
-      this.approveRequestDialog = true;
-      this.request = { ...request };
-    }
-
-//     confirmDenySelected() {
-// 				this.denyRequestDialog = false;
-// 				this.requests = this.requests.filter(val => !this.selectedRequest.includes(val));
-// 				for (let i = 0; i < this.selectedRequest.length; i++) {
-// 						this.requestService.processRequest(this.selectedRequest[i].id).subscribe({ next: (response) => {
-// 								this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Request Denied', life: 3000 });
-// 						} });
-// 				}
-// 				this.selectedRequest = [];
-//   }
-
-//     confirmApproveSelected() {
-//       this.approveRequestDialog = false;
-//       this.requests = this.requests.filter(val => !this.selectedRequest.includes(val));
-//       for (let i = 0; i < this.selectedRequest.length; i++) {
-//         this.requestService.approveRequest(this.selectedRequest[i].id).subscribe({
-//           next: (response) => {
-//             this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Request Approved', life: 3000 });
-//           }
-//         });
-//       }
-//       this.selectedRequest = [];
-//     }
-
-// 		confirmDeny() {
-// 				this.denyRequestDialog = false;
-// 				this.requestService.denyRequest(this.request.id)
-// 				.pipe(timeout(5000)) // 5 seconds timeout
-// 				.subscribe({
-// 						next: (response) => {
-// 								this.requests = this.requests.filter(val => val.id !== this.request.id);
-// 								this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Request Denied', life: 3000 });
-// 						},
-// 						error: (err) => {
-// 								this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
-// 						}
-// 				});
-// 				this.request = this.defaultRequest;
-//   }
-
-//     confirmApprove() {
-//       this.approveRequestDialog = false;
-//       this.requestService.approveRequest(this.request.id)
-//         .pipe(timeout(5000)) // 5 seconds timeout
-//         .subscribe({
-//           next: (response) => {
-//             this.requests = this.requests.filter(val => val.id !== this.request.id);
-//             this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Request Approved', life: 3000 });
-//           },
-//           error: (err) => {
-//             this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
-//           }
-//         });
-//       this.request = this.defaultRequest;
-//     }
-
-    openNew() {
-      this.request = this.defaultRequest;
-      this.submitted = false;
-      this.requestDialog = true;
-     }
-
-		hideDialog() {
-				this.requestDialog = false;
-				this.submitted = false;
-		}
-
-		// saveRequest() {
-		// 		this.submitted = true;
-		
-		// 		if (this.request.id?.trim()) {
-		// 				if (this.request.id) {
-		// 						 this.requestService.updateRequest(this.request)
-		// 								.pipe(timeout(5000)) // 5 seconds timeout
-		// 								.subscribe({
-		// 										next: (response) => {
-		// 												console.log(response);
-		// 												this.request.id = response.body['id'];
-		// 												let index = this.findIndexById(this.request.id);
-		// 												this.requests[index] = this.request;
-		// 												this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Request Updated', life: 3000 });
-		// 										},
-		// 										error: (err) => {
-		// 												this.messageService.add({ severity: 'error', summary: 'Error', detail: "Unable to update request, check fields and try again", life: 3000 });
-		// 										}
-		// 								});
-		// 				} 
-		// 		}
-		// 		this.requestDialog = false;
-		// }
-
-		findIndexById(id: string): number {
-				let index = -1;
-				for (let i = 0; i < this.requests.length; i++) {
-						if (this.requests[i].entitlementId === id) {
-								index = i;
-								break;
-						}
+			  });
+			  this.loading = false;
+			},
+			error: (err) => {
+			  console.error('Error fetching requests:', err);
+			  this.loading = false;
+			}
+		  });
+		  
+		  this.requestService.getByManagerAndStatus(this.identityId, true).subscribe({
+			next: (response) => {
+			  let body: any = response.body;
+			  body.forEach((element: any) => { 
+				if (element) {
+				  this.processedRequests.push(element);
+          
 				}
-
-				return index;
-		}
-
-		onGlobalFilter(table: Table, event: Event) {
-				table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
-		}
+			  });
+			  this.loading = false;
+			},
+			error: (err) => {
+			  console.error('Error fetching requests:', err);
+			  this.loading = false;
+			}
+		  });
+    
 		
+  }
+
+  
+  processRequest(request: Request, choice : boolean)  {
+
+		this.request = request; 
+    console.log(this.request);
+		  this.requestService.processRequest(this.request.requesterId, this.request.entitlementId, choice, this.request.requestId)
+		  .subscribe({
+			next: (response) => {
+			  this.loading = false;
+        	  this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Request Processed', life: 3000 });
+			  this.requests = this.requests.filter(val => val.requestId !== this.request.requestId);
+			  this.processedRequests.push(request);
+			},
+			error: (err) => {
+			  console.error('Error fetching requests:', err);
+			  this.loading = false;
+			}
+		  });
+      this.requestDialog = false;
+	  
+		 
+	  }
+
+  customSort(event: any) {
+    event.data.sort((data1: any, data2: any) => {
+      let value1 = this.resolveFieldData(data1, event.field);
+      let value2 = this.resolveFieldData(data2, event.field);
+      let result = null;
+
+      // Check if value1 and value2 are objects and pull out their 'value' property
+      if (typeof value1 === 'object' && value1 !== null) {
+        value1 = value1[0].value;
+      }
+      if (typeof value2 === 'object' && value2 !== null) {
+        value2 = value2[0].value;
+      }
+
+      if (value1 == null && value2 != null) result = -1;
+      else if (value1 != null && value2 == null) result = 1;
+      else if (value1 == null && value2 == null) result = 0;
+      else if (typeof value1 === 'string' && typeof value2 === 'string')
+        result = value1.localeCompare(value2);
+      else result = value1 < value2 ? -1 : value1 > value2 ? 1 : 0;
+
+      return event.order * result;
+    });
+  }
+
+  resolveFieldData(data: any, field: string): any {
+    if (data && field) {
+      let fields = field.split('.');
+      let value = data;
+      for (let i = 0; i < fields.length; i++) {
+        if (value == null) {
+          return null;
+        }
+        value = value[fields[i]];
+      }
+      return value;
+    } else {
+      return null;
+    }
+  }
+
+
+
+
+  openNew(value: any) {
+    this.entitlement.name =  value.displayableName;
+    this.entitlement.application =  value.applicationDisplayName;
+    this.submitted = false;
+    this.requestDialog = true;
+  }
+
+  hideDialog() {
+    this.requestDialog = false;
+    this.submitted = false;
+  }
+
+
+  findIndexById(id: string): number {
+    let index = -1;
+    for (let i = 0; i < this.requests.length; i++) {
+      if (this.requests[i].entitlementId === id) {
+        index = i;
+        break;
+      }
+    }
+
+    return index;
+  }
+
+  onGlobalFilter(table: Table, event: Event) {
+    table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+  }
 }
