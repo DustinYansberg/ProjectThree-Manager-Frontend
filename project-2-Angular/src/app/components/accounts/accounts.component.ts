@@ -30,7 +30,7 @@ export class AccountsComponent implements OnInit {
 
     applications: any[] = [];
 
-  defaultAccount = new Account("", "", "", "", "", "", "", "", "", "", "", true, false);
+  defaultAccount = new Account("", "ac12000290eb1baf8190f0a73ef80926", "", "", "Salesforce", "", "", "", "", "", "", true, false);
 
     selectedAccounts: Account[] = [];
 
