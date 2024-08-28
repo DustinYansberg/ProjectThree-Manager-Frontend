@@ -81,7 +81,14 @@ export class AccountsComponent implements OnInit {
           }
         });
 
-        this.applications = [ { label: 'Salesforce', value: 'Salesforce' } ];
+        this.applications = [
+           { label: 'Salesforce', value: 'Salesforce' },
+           { label: 'Appian', value: 'Appian' },
+           { label: 'ZenDesk', value: 'ZenDesk' },
+           { label: 'SailPoint', value: 'SailPoint' },
+           { label: 'ServiceNow', value: 'ServiceNow' },
+           { label: 'EasyPics', value: 'EasyPics' }
+         ];
   }
 
   getAccountsByIdentity(event: any) {
