@@ -10,6 +10,7 @@ import { Name } from 'src/app/Models/name';
 
 import { EmployeeService } from 'src/app/Services/employee.service';
 import { UserService } from 'src/app/Services/user.service';
+import { UpdateEmployee } from '../../Models/updateEmployee';
 
 @Component({
     templateUrl: './employees.component.html',
@@ -36,6 +37,7 @@ export class EmployeesComponent implements OnInit {
     employee: Employee = this.defaultEmployee;
 
     cols: any[];
+  updateEmployee: UpdateEmployee;
 
     loading: boolean = false;
 
@@ -229,10 +231,11 @@ export class EmployeesComponent implements OnInit {
     saveEmployee() {
       this.submitted = true;
     
-        if (this.employee.userName?.trim()) {
-          if (this.employee.id) {
-                console.log(this.employee);
-                this.employeeService.updateEmployee(this.employee)
+      if (this.employee.userName?.trim()) {
+        if (!this.creatingEmployee) {
+          console.log(this.employee);
+          this.updateEmployee = new UpdateEmployee(this.employee.name.givenName, this.employee.name.familyName, this.employee.displayName, this.employee.emails[0].value, this.employee.password);
+            this.employeeService.updateEmployee(this.employee.id, this.updateEmployee)
                     .pipe(timeout(5000)) // 5 seconds timeout
                     .subscribe({
                         next: (response) => {
