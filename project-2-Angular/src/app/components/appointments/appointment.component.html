@@ -23,7 +23,7 @@
         <ng-template pTemplate="header">
           <tr>
             <th pSortableColumn="title"> Title <p-sortIcon field='title'></p-sortIcon></th>
-            <th pSortableColumn="attendeeId"> Attendee <p-sortIcon field="attendeeId"></p-sortIcon></th>
+            <th pSortableColumn="attendee"> Attendee <p-sortIcon field="attendee"></p-sortIcon></th>
             <th pSortableColumn="datetime"> Date & Time <p-sortIcon field="datetime"></p-sortIcon></th>
             <th></th>
           </tr>
@@ -53,8 +53,7 @@
       <ng-template pTemplate="content">
         <div class="field">
           <label for="attendeeId">Attendee</label>
-          <p-dropdown [options]="users" [(ngModel)]="appointment.attendeeId" name="identity" placeholder="Select Identity" [filter]="true" optionLabel="label" optionValue="value" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !document.identityId}"></p-dropdown>
-          <small class="ng-dirty ng-invalid" *ngIf="submitted && !document.identityId">Identity is required.</small>
+          <p-dropdown [options]="employees" [(ngModel)]="appointment.attendeeId" name="identity" placeholder="Select Identity" [filter]="true" optionLabel="label" optionValue="value" required autofocus></p-dropdown>
         </div>
         <div class="field">
           <label for="title">Title</label>
@@ -66,7 +65,7 @@
         </div>
         <div class="field">
           <label for="datetime">Date & Time</label>
-          <input type="datetime-local" pInputText id="datetime" [(ngModel)]="appointment.datetime" />
+          <input type="datetime-local" pInputText id="datetime" value="2024-08-30T10:00:00" [(ngModel)]="appointment.datetime" />
         </div>
       </ng-template>
 

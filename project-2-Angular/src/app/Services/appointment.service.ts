@@ -21,7 +21,7 @@ export class AppointmentService {
   }
 
   deleteAppointment(id : number) {
-    return this.http.put(this.url + 'delete/' + id, { observe: 'response' });
+    return this.http.delete(this.url + 'delete/' + id, { observe: 'response' });
   }
 
   
