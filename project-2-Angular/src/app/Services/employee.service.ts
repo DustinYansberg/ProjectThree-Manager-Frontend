@@ -8,8 +8,8 @@ export class EmployeeService {
 
   constructor(private http: HttpClient) { }
 
-  //url: String = 'http://4.156.40.62:9001/';
-   url: String = 'http://localhost:8081/';
+  url: String = 'http://4.156.40.62:9001/';
+   //url: String = 'http://localhost:8081/';
 
   
   
