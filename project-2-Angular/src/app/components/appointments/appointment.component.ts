@@ -70,6 +70,26 @@ export class AppointmentComponent implements OnInit {
             body.Resources.forEach((resource: Employee) => {
               console.log(this.employees);
               this.employees.push({ label: resource.displayName.slice(0, 30).toString(), value: resource.id.toString() });
+              this.appointmentService.getAppointmentByOrganizerId(this.identityId)
+                .subscribe({
+                  next: (response) => {
+                    let body: any = response.body;
+
+                    body.forEach((resource: Appointment) => {
+                      if (resource.datetime) {
+                        resource.displayName = this.employees.find(x => x.value === resource.attendeeId).label;
+                        resource.formattedDate = new Date(resource.datetime).toLocaleString();
+                      }
+                    });
+
+                    this.appointments = body;
+                    this.loading = false;
+                  },
+                  error: (err) => {
+                    this.loading = false;
+                    this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
+                  }
+                });
 
             });
             console.log(this.employees);
@@ -79,26 +99,7 @@ export class AppointmentComponent implements OnInit {
           }
         });
 
-      this.appointmentService.getAppointmentByOrganizerId(this.identityId)
-        .subscribe({
-          next: (response) => {
-            let body: any = response.body;
-
-            body.forEach((resource: Appointment) => {
-              if (resource.datetime) {
-                resource.displayName = this.employees.find(x => x.value === resource.attendeeId).label;
-                resource.formattedDate = new Date(resource.datetime).toLocaleString();
-              }
-            });
-
-            this.appointments = body;
-            this.loading = false;
-          },
-          error: (err) => {
-            this.loading = false;
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
-          }
-        });
+      
 
       
 
