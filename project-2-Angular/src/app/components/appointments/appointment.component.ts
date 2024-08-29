@@ -60,26 +60,6 @@ export class AppointmentComponent implements OnInit {
         
       };
 
-      this.appointmentService.getAppointmentByOrganizerId(this.identityId)
-        .subscribe({
-          next: (response) => {
-            let body: any = response.body;
-
-            body.forEach((resource: Appointment) => {
-              if (resource.datetime) {
-                resource.formattedDate = new Date(resource.datetime).toLocaleString();
-              }
-            });
-
-            this.appointments = body;
-            this.loading = false;
-          },
-          error: (err) => {
-            this.loading = false;
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
-          }
-        });
-
       this.employeeService.getByManager(this.identityId)
         .pipe(timeout(20000)) // 20 seconds timeout
         .subscribe({
@@ -98,6 +78,29 @@ export class AppointmentComponent implements OnInit {
             this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
           }
         });
+
+      this.appointmentService.getAppointmentByOrganizerId(this.identityId)
+        .subscribe({
+          next: (response) => {
+            let body: any = response.body;
+
+            body.forEach((resource: Appointment) => {
+              if (resource.datetime) {
+                resource.displayName = this.employees.find(x => x.value === resource.attendeeId).label;
+                resource.formattedDate = new Date(resource.datetime).toLocaleString();
+              }
+            });
+
+            this.appointments = body;
+            this.loading = false;
+          },
+          error: (err) => {
+            this.loading = false;
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
+          }
+        });
+
+      
 
       
 
