@@ -30,7 +30,7 @@ export class AccountsComponent implements OnInit {
 
     applications: any[] = [];
 
-  defaultAccount = new Account("", "ac12000290eb1baf8190f0a73ef80926", "", "", "Salesforce", "", "", "", "", "", "", true, false);
+  defaultAccount = new Account("", "ac12000290eb1baf8190f0a73ef80926", "", "", "", "Salesforce", "", "", "", "", "", "", true, false);
 
     selectedAccounts: Account[] = [];
 
@@ -101,7 +101,11 @@ export class AccountsComponent implements OnInit {
         next: (response) => {
           console.log(response)
           let body: any = response.body;
-          this.accounts = body;
+          body.forEach((resource: any) => {
+            if (resource.isActive == "true") {
+              this.accounts.push(resource);
+            }
+          });
           this.loading = false;
           console.log(this.accounts);
         },
@@ -187,8 +191,9 @@ export class AccountsComponent implements OnInit {
     }
 
     confirmDelete() {
-        this.deleteAccountDialog = false;
-      this.accountService.deleteAccount(this.account.accountAppId)
+      this.deleteAccountDialog = false;
+      console.log(this.account);
+      this.accountService.deleteAccount(this.account.accountId)
         .pipe(timeout(5000)) // 5 seconds timeout
         .subscribe({
             next: (response) => {
@@ -221,13 +226,14 @@ export class AccountsComponent implements OnInit {
     this.tempEmployee = this.fullEmployees.filter(employee => employee.id === this.account.userId)[0];
     this.account.firstName = this.tempEmployee.name.givenName;
     this.account.lastName = this.tempEmployee.name.familyName;
+    this.account.accountDisplayName = this.account.username;
+    this.account.email = this.account.username;
       console.log(this.account);
         this.accountService.createAccount(this.account)
             .pipe(timeout(5000)) // 5 seconds timeout
             .subscribe({
                 next: (response) => {
                     console.log(response);
-                    this.account.accountAppId = response.body['id'];
                     this.accounts = [ ...this.accounts, this.account ];
                     this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Account Created', life: 3000 });
                 },

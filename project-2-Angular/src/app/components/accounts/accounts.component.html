@@ -6,12 +6,7 @@
                 <ng-template pTemplate="left">
                     <div class="my-2">
                         <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
-                        <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedAccounts()" [disabled]="!selectedAccounts || !selectedAccounts.length"></button>
                     </div>
-                </ng-template>
-
-                <ng-template pTemplate="right">
-                    <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help" (click)="dt.exportCSV()"></button>
                 </ng-template>
             </p-toolbar>
 
@@ -35,20 +30,14 @@
                 </ng-template>
                 <ng-template pTemplate="header">
                     <tr>
-                        <th style="width: 3rem">
-                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-                        </th>
-                        <th pSortableColumn="identity.userName">Entity User Name <p-sortIcon field='identity.userName'></p-sortIcon></th>
-                        <th pSortableColumn="id">Account ID <p-sortIcon field="id"></p-sortIcon></th>
-                        <th pSortableColumn="application">Application Name <p-sortIcon field='application'></p-sortIcon></th>
+                        <th pSortableColumn="accountDisplayName">Entity User Name <p-sortIcon field='accountDisplayName'></p-sortIcon></th>
+                        <th pSortableColumn="accountId">Account ID <p-sortIcon field="accountId"></p-sortIcon></th>
+                        <th pSortableColumn="applicationDisplayName">Application Name <p-sortIcon field='applicationDisplayName'></p-sortIcon></th>
                         <th></th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-account>
                     <tr>
-                        <td>
-                            <p-tableCheckbox [value]="account"></p-tableCheckbox>
-                        </td>
                         <td style="width:30%; min-width:10rem; max-width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                             <span class="p-column-title">Entity User Name</span>
                             <span title="{{account.accountDisplayName || account.id}}">
@@ -103,14 +92,6 @@
                     <label for="alias">Alias</label>
                     <input type="text" maxlength="8" pInputText id="accountAlias" name="alias" [(ngModel)]="account.accountAlias" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].Alias}"/>
                     <small class="ng-dirty ng-invalid" *ngIf="submitted && !account['urn:ietf:params:scim:schemas:sailpoint:1.0:Application:Schema:Salesforce:account'].Alias">Alias is required.</small>
-                </div>
-                <div class="field">
-                    <label for="email">Email</label>
-                    <input 
-                        type="email" pInputText id="email" name="email" 
-                        [(ngModel)]="account.email" 
-                        required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && accountForm.controls.email?.invalid}"
-                    />
                 </div>
                 <div class="p-dialog-footer">
                     <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
