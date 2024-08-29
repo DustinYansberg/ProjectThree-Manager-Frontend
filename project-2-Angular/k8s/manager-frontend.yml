@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: manager-frontend-portal2
+  labels:
+    app: manager-frontend-portal2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: manager-frontend-portal2
+  template:
+    metadata:
+      labels:
+        app: manager-frontend-portal2
+
+    spec:
+      containers:
+        - name: manager-frontend-portal2
+
+          image: dustinyansberg/manager-frontend:latest
+
+          ports:
+            - containerPort: 4200
