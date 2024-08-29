@@ -188,7 +188,8 @@ export class EmployeesComponent implements OnInit {
     }
 
     editEmployee(employee: Employee) {
-        this.employee = { ...employee };
+      this.employee = { ...employee };
+      this.employee.emails = [ new Email("", employee.emails[0].value, true) ];
         this.employeeDialog = true;
         this.creatingEmployee = false;
     }
@@ -263,7 +264,8 @@ export class EmployeesComponent implements OnInit {
                             console.log(response);
                             this.employee.id = response.body['id'];
                             this.employees = [ ...this.employees, this.employee ];
-                            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Employee Created', life: 3000 });
+                        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Employee Created', life: 3000 });
+                        this.employee = this.defaultEmployee;
                         },
                         error: (err) => {
                             this.messageService.add({ severity: 'error', summary: 'Error', detail: "Unable to create employee, check fields and try again", life: 3000 });

@@ -36,32 +36,32 @@
                         <th></th>
                     </tr>
                 </ng-template>
-                <ng-template pTemplate="body" let-employee>
+                <ng-template pTemplate="body" let-eachEmployee>
                   <tr>
                     <td>
-                      <p-tableCheckbox [value]="employee"></p-tableCheckbox>
+                      <p-tableCheckbox [value]="eachEmployee"></p-tableCheckbox>
                     </td>
                     <td style="width:30%; min-width:10rem; max-width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                       <span class="p-column-title">Username</span>
-                      <a [routerLink]="['/employeedetail', employee.id]" title="{{employee.userName || employee.id}}">
-                        {{ (employee.userName || employee.id) | slice:0:20 }}{{ (employee.userName || employee.id).length > 20 ? '...' : '' }}
+                      <a [routerLink]="['/employeedetail', employee.id]" title="{{eachEmployee.userName || eachEmployee.id}}">
+                        {{ (eachEmployee.userName || eachEmployee.id) | slice:0:20 }}{{ (eachEmployee.userName || eachEmployee.id).length > 20 ? '...' : '' }}
                       </a>
                     </td>
                     <td style="width:30%; min-width:8rem; max-width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                      <span class="p-column-title" title="{{ employee.displayName }}">Display Name</span>
-                      {{ employee.displayName | slice:0:20 }}
+                      <span class="p-column-title" title="{{ eachEmployee.displayName }}">Display Name</span>
+                      {{ eachEmployee.displayName | slice:0:20 }}
                     </td>
                     <td style="width:30%; min-width:10rem; max-width: 30%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                       <span class="p-column-title">Email</span>
-                      <a [href]="'mailto:' + employee.emails[0].value" title="{{ employee.emails[0].value }}">
-                        {{ employee.emails[0].value | slice:0:20 }}{{ employee.emails[0].value.length > 20 ? '...' : '' }}
+                      <a [href]="'mailto:' + employee.emails[0].value" title="{{ eachEmployee.emails[0].value }}">
+                        {{ eachEmployee.emails[0].value | slice:0:20 }}{{ eachEmployee.emails[0].value.length > 20 ? '...' : '' }}
                       </a>
                     </td>
 
                     <td>
                       <div class="flex">
-                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editEmployee(employee)"></button>
-                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteEmployee(employee)"></button>
+                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editEmployee(eachEmployee)"></button>
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteEmployee(eachEmployee)"></button>
                       </div>
                     </td>
                   </tr>
