@@ -54,6 +54,8 @@ export class RequestsComponent implements OnInit {
 
   loading: boolean = false;
 
+  loading2: boolean = false;
+
   // accounts: string[] = [
 	// "Zendesk",
 	// "Salesforce",
@@ -95,6 +97,7 @@ export class RequestsComponent implements OnInit {
 
   ngOnInit() {
     this.loading = true;
+    this.loading2 = true;
     this.requests;
     this.possibleRequests;
     this.entitlements;
@@ -116,12 +119,13 @@ export class RequestsComponent implements OnInit {
                 if (element) {
                   element.displayName = this.employees.find((employee) => employee.value === element.requesterId).label;
                   this.requests.push(element);
+                  
                 }
               });
               this.loading = false;
             },
             error: (err) => {
-              console.error('Error fetching requests:', err);
+              this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
               this.loading = false;
             }
           });
@@ -136,11 +140,11 @@ export class RequestsComponent implements OnInit {
 
                 }
               });
-              this.loading = false;
+              this.loading2 = false;
             },
             error: (err) => {
-              console.error('Error fetching requests:', err);
-              this.loading = false;
+              this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
+              this.loading2 = false;
             }
           });
         },
@@ -164,7 +168,9 @@ export class RequestsComponent implements OnInit {
 			next: (response) => {
 			  this.loading = false;
         	  this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Request Processed', life: 3000 });
-			  this.requests = this.requests.filter(val => val.requestId !== this.request.requestId);
+          this.requests = this.requests.filter(val => val.requestId !== this.request.requestId);
+          request.approved = choice;
+          request.processed = true;
 			  this.processedRequests.push(request);
 			},
 			error: (err) => {

@@ -50,7 +50,7 @@
 
       <br>
       <!-- PROCESSED REQUESTS SECTION -->
-      <p-table #dt [loading]="loading" [value]="processedRequests" [customSort]="true" (sortFunction)="customSort($event)" [columns]="cols" responsiveLayout="scroll" [rows]="100" [globalFilterFields]="['displayName','email']"  [rowHover]="true" dataKey="id" >
+      <p-table #dt [loading]="loading2" [value]="processedRequests" [customSort]="true" (sortFunction)="customSort($event)" [columns]="cols" responsiveLayout="scroll" [rows]="100" [globalFilterFields]="['displayName','email']"  [rowHover]="true" dataKey="id" >
         <ng-template pTemplate="caption">
           <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
             <h5 class="m-0">Processed Requests</h5>

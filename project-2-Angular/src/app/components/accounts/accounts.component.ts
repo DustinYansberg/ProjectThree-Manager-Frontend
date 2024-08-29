@@ -68,7 +68,6 @@ export class AccountsComponent implements OnInit {
             this.fullEmployees = body.Resources;
 
             body.Resources.forEach((resource: Employee) => {
-              console.log(this.employees);
               this.employees.push({ label: resource.displayName.slice(0, 30).toString(), value: resource.id.toString() });
 
             });
