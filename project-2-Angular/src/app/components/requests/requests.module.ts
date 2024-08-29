@@ -17,6 +17,7 @@ import { DialogModule } from 'primeng/dialog';
 import { RequestService } from '../../Services/request.service';
 import { RequestsComponent } from './requests.component';
 import { RequestsRoutingModule } from './requests-routing.module';
+import { EmployeeService } from '../../Services/employee.service';
 
 
 
@@ -40,7 +41,8 @@ import { RequestsRoutingModule } from './requests-routing.module';
         RequestsRoutingModule
 	],
 	providers: [
-		RequestService 
+    RequestService,
+    EmployeeService
   ],
   declarations: [RequestsComponent]
 })

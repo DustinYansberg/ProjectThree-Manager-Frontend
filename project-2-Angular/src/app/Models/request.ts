@@ -10,6 +10,7 @@ export class Request {
   processed: boolean;
   approved: boolean;
   description: string;
+  displayName: string;
 
   constructor(
     requestId: string = '',

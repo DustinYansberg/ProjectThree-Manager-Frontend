@@ -26,6 +26,8 @@ export class RequestsComponent implements OnInit {
 
   entitlements: Entitlement[] = [];
 
+  employees: any[] = [];
+
   entitlement: Entitlement = new Entitlement('','','','');
 
   possibleRequests: Request[] = [];
@@ -84,6 +86,7 @@ export class RequestsComponent implements OnInit {
     private requestService: RequestService,
     private messageService: MessageService,
     private userService: UserService,
+    private employeeSerivce: EmployeeService
   ) {
 	this.userService.idObservable.subscribe(id => {
 	this.identityId = id});
@@ -96,40 +99,57 @@ export class RequestsComponent implements OnInit {
     this.possibleRequests;
     this.entitlements;
 
+    this.employeeSerivce.getByManager(this.identityId)
+      .pipe(timeout(20000)) // 20 seconds timeout
+      .subscribe({
+        next: (response) => {
+          let body: any = response.body;
+
+          body.Resources.forEach((resource: Employee) => {
+            this.employees.push({ label: resource.displayName.slice(0, 30).toString(), value: resource.id.toString() });
+          });
+
+          this.requestService.getByManagerAndStatus(this.identityId, false).subscribe({
+            next: (response) => {
+              let body: any = response.body;
+              body.forEach((element: any) => {
+                if (element) {
+                  element.displayName = this.employees.find((employee) => employee.value === element.requesterId).label;
+                  this.requests.push(element);
+                }
+              });
+              this.loading = false;
+            },
+            error: (err) => {
+              console.error('Error fetching requests:', err);
+              this.loading = false;
+            }
+          });
+
+          this.requestService.getByManagerAndStatus(this.identityId, true).subscribe({
+            next: (response) => {
+              let body: any = response.body;
+              body.forEach((element: any) => {
+                if (element) {
+                  element.displayName = this.employees.find((employee) => employee.value === element.requesterId).label;
+                  this.processedRequests.push(element);
+
+                }
+              });
+              this.loading = false;
+            },
+            error: (err) => {
+              console.error('Error fetching requests:', err);
+              this.loading = false;
+            }
+          });
+        },
+        error: (err) => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
+        }
+      });
 	
-		  this.requestService.getByManagerAndStatus(this.identityId, false).subscribe({
-			next: (response) => {
-			  let body: any = response.body;
-			  body.forEach((element: any) => { 
-				if (element) {
-				  this.requests.push(element);
-          
-				}
-			  });
-			  this.loading = false;
-			},
-			error: (err) => {
-			  console.error('Error fetching requests:', err);
-			  this.loading = false;
-			}
-		  });
 		  
-		  this.requestService.getByManagerAndStatus(this.identityId, true).subscribe({
-			next: (response) => {
-			  let body: any = response.body;
-			  body.forEach((element: any) => { 
-				if (element) {
-				  this.processedRequests.push(element);
-          
-				}
-			  });
-			  this.loading = false;
-			},
-			error: (err) => {
-			  console.error('Error fetching requests:', err);
-			  this.loading = false;
-			}
-		  });
     
 		
   }
