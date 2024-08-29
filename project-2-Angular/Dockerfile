@@ -29,7 +29,7 @@ COPY --from=build /app/dist /usr/share/nginx/html
 WORKDIR /usr/share/nginx/html
 
 # Expose port 8080
-EXPOSE 8080
+EXPOSE 4200
 
 # Start http-server
-CMD ["http-server", "-p", "8080"]
+CMD ["http-server", "-p", "4200"]

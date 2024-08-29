@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: manager-frontend-service2
+spec:
+  selector:
+    app: manager-frontend-portal2
+  ports:
+    - protocol: TCP
+      port: 4200
+      targetPort: 4200
+  type: LoadBalancer
