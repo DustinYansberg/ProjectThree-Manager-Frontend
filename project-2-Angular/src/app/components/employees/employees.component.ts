@@ -217,13 +217,14 @@ export class EmployeesComponent implements OnInit {
         .subscribe({
             next: (response) => {
                 this.employees = this.employees.filter(val => val.id !== this.employee.id);
-                this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Employee Deleted', life: 3000 });
+            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Employee Deleted', life: 3000 });
+            this.employee = this.defaultEmployee;
             },
             error: (err) => {
                 this.messageService.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
             }
         });
-        this.employee = this.defaultEmployee;
+        
     }
 
     hideDialog() {
@@ -263,9 +264,10 @@ export class EmployeesComponent implements OnInit {
                         next: (response) => {
                             console.log(response);
                             this.employee.id = response.body['id'];
-                            this.employees = [ ...this.employees, this.employee ];
+                            this.employees = [ ...this.employees, response.body ];
                         this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Employee Created', life: 3000 });
                         this.employee = this.defaultEmployee;
+                        this.createEmployee = null;
                         },
                         error: (err) => {
                             this.messageService.add({ severity: 'error', summary: 'Error', detail: "Unable to create employee, check fields and try again", life: 3000 });
