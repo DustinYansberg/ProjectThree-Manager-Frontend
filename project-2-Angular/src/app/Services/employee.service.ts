@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Employee } from '../Models/employee';
 import { UpdateEmployee } from '../Models/updateEmployee';
+import { CreateEmployee } from '../Models/createEmployee';
 
 @Injectable()
 export class EmployeeService {
@@ -25,7 +26,7 @@ export class EmployeeService {
     return this.http.get(this.url + 'employee/' + id, { observe: 'response' });
   }
 
-  createEmployee(employee: Employee) {
+  createEmployee(employee: CreateEmployee) {
     return this.http.post(this.url + 'employee', employee, { observe: 'response' });
   }
 

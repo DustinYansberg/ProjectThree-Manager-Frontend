@@ -11,6 +11,7 @@ import { Name } from 'src/app/Models/name';
 import { EmployeeService } from 'src/app/Services/employee.service';
 import { UserService } from 'src/app/Services/user.service';
 import { UpdateEmployee } from '../../Models/updateEmployee';
+import { CreateEmployee } from '../../Models/createEmployee';
 
 @Component({
     templateUrl: './employees.component.html',
@@ -37,7 +38,9 @@ export class EmployeesComponent implements OnInit {
     employee: Employee = this.defaultEmployee;
 
     cols: any[];
-  updateEmployee: UpdateEmployee;
+    updateEmployee: UpdateEmployee;
+
+    createEmployee: CreateEmployee;
 
     loading: boolean = false;
 
@@ -249,9 +252,11 @@ export class EmployeesComponent implements OnInit {
                             this.messageService.add({ severity: 'error', summary: 'Error', detail: "Unable to update employee, check fields and try again", life: 3000 });
                         }
                     });
-            } else if (this.creatingEmployee) {
-              console.log(this.employee);
-                this.employeeService.createEmployee(this.employee)
+        } else if (this.creatingEmployee) {
+          this.employee.manager.value = this.identityId;
+          this.createEmployee = new CreateEmployee(this.employee.userName, this.employee.password, this.employee.name.givenName, this.employee.name.familyName, this.employee.emails[0].value, this.employee.manager.value, "", "", this.employee.displayName, this.employee.active, this.employee.userType, "");
+          console.log(this.createEmployee);
+          this.employeeService.createEmployee(this.createEmployee)
                     .pipe(timeout(5000)) // 5 seconds timeout
                     .subscribe({
                         next: (response) => {
