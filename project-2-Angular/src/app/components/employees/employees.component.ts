@@ -24,13 +24,10 @@ export class EmployeesComponent implements OnInit {
     defaultEmployee: Employee = new Employee("", "", new Name("", "", ""), "", "employee", false, "", [new Email("", "", true)], new EmployeeDetail("", "", "", [], [], []), new Manager("", "", ""));
 
     selectedEmployees: Employee[] = [];
-
     totalRecords: number = 100;
-
     employeeDialog: boolean = false;
-
     deleteEmployeeDialog: boolean = false;
-
+    usernameTaken: boolean = false;
     deleteEmployeesDialog: boolean = false;
     
     submitted: boolean = false;
@@ -209,6 +206,44 @@ export class EmployeesComponent implements OnInit {
         }
         this.selectedEmployees = [];
     }
+
+  isValidEmail(email: string): boolean {
+    const pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]/;
+    return pattern.test(email);
+  }
+
+  isPasswordValid() {
+    const password = this.employee.password;
+    if (!password) {
+      return false;
+    }
+
+    const minLength = password.length >= 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    return minLength && hasUpperCase && hasNumber && hasSymbol;
+  }
+
+    isFormValid(): boolean {
+        const emailValid = this.employee.emails[0].value && this.isValidEmail(this.employee.emails[0].value);
+        const userNameValid = this.employee.userName && this.employee.userName.trim() !== '';
+      const displayNameValid = this.employee.displayName && this.employee.displayName.trim() !== '';
+      var passwordValid = false
+      if (this.creatingEmployee) {
+        passwordValid = this.employee.password && this.employee.password.trim() !== '';
+      } else {
+        passwordValid = true;
+      }
+      this.checkUsername();
+
+        return emailValid && userNameValid && displayNameValid && passwordValid;
+  }
+
+  checkUsername() {
+    this.usernameTaken = this.employees.some(emp => emp.userName === this.employee.userName);
+  }
 
     confirmDelete() {
         this.deleteEmployeeDialog = false;

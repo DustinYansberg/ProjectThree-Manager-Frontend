@@ -70,42 +70,56 @@
         </div>
 
         <p-dialog [(visible)]="employeeDialog" [style]="{width: '450px'}" header="Employee Details" [modal]="true" class="p-fluid">
-            <ng-template pTemplate="content">
-                <div class="field">
-                    <label for="userName">User Name</label>
-                    <input disabled="{{!creatingEmployee}}" type="text" pInputText id="userName" [(ngModel)]="employee.userName" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !employee.displayName}"/>
-                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !employee.displayName">User Name is required.</small>
-                </div>
-                <div class="field">
-                    <label for="firstName">First Name</label>
-                    <input type="text" pInputText id="givenName" [(ngModel)]="employee.name.givenName"/>
-                </div> 
-                <div class="field">
-                    <label for="lastName">Last Name</label>
-                    <input type="text" pInputText id="familyName" [(ngModel)]="employee.name.familyName"/>
-                </div> 
-                <div class="field">
-                    <label for="displayName">Display Name</label>
-                    <input type="text" pInputText id="displayName" [(ngModel)]="employee.displayName" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !employee.displayName}"/>
-                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !employee.displayName">Display Name is required.</small>
-                </div>  
-                <div class="field">
-                    <label for="email">Email</label>
-                    <input type="text" pInputText id="email" [(ngModel)]="employee.emails[0].value"/>
-                </div> 
-                <div class="field">
-                    <label for="password">Password</label>
-                    <div class="p-inputgroup">
-                        <input [type]="passwordFieldType" pInputText id="password" [(ngModel)]="employee.password" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !employee.password}"/>
-                        <button type="button" pButton icon="{{passwordFieldType === 'password' ? 'pi pi-eye' : 'pi pi-eye-slash'}}" (click)="togglePasswordVisibility()"></button>
-                    </div>
-                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !employee.password">Password is required.</small>
-                </div>
-            </ng-template>
+          <ng-template pTemplate="content">
+            <div class="field">
+              <label for="userName">*Username</label>
+              <input disabled="{{!creatingEmployee}}" type="text" pInputText id="userName" [(ngModel)]="employee.userName" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !employee.userName}" />
+              <small class="error-message" *ngIf="submitted && !employee.userName">User Name is required.</small>
+              <small class="error-message" *ngIf="usernameTaken && creatingEmployee">Username is already taken.</small>
+            </div>
+            <div class="field">
+              <label for="firstName">First Name</label>
+              <input type="text" pInputText id="givenName" [(ngModel)]="employee.name.givenName" />
+            </div>
+            <div class="field">
+              <label for="lastName">Last Name</label>
+              <input type="text" pInputText id="familyName" [(ngModel)]="employee.name.familyName" />
+            </div>
+            <div class="field">
+              <label for="displayName">*Display Name</label>
+              <input type="text" pInputText id="displayName" [(ngModel)]="employee.displayName" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !employee.displayName}" />
+              <small class="error-message" *ngIf="submitted && !employee.displayName">Display Name is required.</small>
+            </div>
+            <div class="field">
+              <label for="email">*Email</label>
+              <input type="text"
+                     pInputText
+                     id="email"
+                     [(ngModel)]="employee.emails[0].value"
+                     name="email"
+                     #emailInput="ngModel"
+                     required
+                     email
+                     [ngClass]="{'ng-invalid ng-dirty': submitted && emailInput.invalid}" />
+              <small class="error-message" *ngIf="submitted && emailInput.errors?.required">Email is required.</small>
+              <small class="error-message" *ngIf="emailInput.errors?.email">Invalid email</small>
+            </div>
+            <div class="field">
+              <label for="password">*Password</label>
+              <div class="p-inputgroup">
+                <input [type]="passwordFieldType" pInputText id="password" [(ngModel)]="employee.password" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !employee.password}" />
+                <button type="button" pButton icon="{{passwordFieldType === 'password' ? 'pi pi-eye' : 'pi pi-eye-slash'}}" (click)="togglePasswordVisibility()"></button>
+              </div>
+              <small class="ng-dirty ng-invalid" *ngIf="submitted && !employee.password">Password is required.</small>
+              <small class="error-message" *ngIf="!isPasswordValid() && employee.password">
+                Password must be at least 8 characters long, include an uppercase letter, a number, and a special symbol.
+              </small>
+            </div>
+          </ng-template>
 
             <ng-template pTemplate="footer">
                 <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
-                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveEmployee()"></button>
+                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveEmployee()" [disabled]="!isFormValid()"></button>
             </ng-template>
         </p-dialog>
 

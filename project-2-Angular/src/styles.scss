@@ -1,5 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
 
+.error-message {
+  color: #d9534f; /* Bootstrap's danger color */
+  font-size: 0.875em; /* Slightly smaller than the default text size */
+  margin-top: 0.25rem; /* Space above the error message */
+  display: block; /* Make sure it appears on its own line */
+}
+
+/* Optional: Style the input fields that are invalid */
+.ng-invalid.ng-dirty {
+  border-color: #d9534f; /* Change the border color to red */
+  background-color: #f9d6d5; /* Light red background for visibility */
+}
+
+/* Optional: Add a hover effect for better user experience */
+input:focus.ng-invalid {
+  outline: none; /* Remove default outline */
+  box-shadow: 0 0 5px rgba(217, 83, 79, 0.5); /* Add a shadow for focus state */
+}
+
 $gutter: 1rem; //for primeflex grid system
 @import "assets/layout/styles/layout/layout.scss";
 
